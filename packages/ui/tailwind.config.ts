@@ -1,13 +1,20 @@
 import type { Config } from "tailwindcss"
 import tailwindcssAnimate from "tailwindcss-animate"
-import { fontFamily } from "tailwindcss/defaultTheme"
-
+import { fontFamily } from "tailwindcss/defaultTheme.js"
+import { colors } from "./src/colors.js"
 const config = {
   darkMode: ["class"],
   content: [
     "app/**/*.{ts,tsx}",
     "components/**/*.{ts,tsx}",
     "../../packages/ui/src/components/**/*.{ts,tsx}",
+  ],
+  safelist: [
+    
+    { 
+      pattern: new RegExp(`bg-(${colors.join("|")})-.+`),
+      variants: ['hover']
+     }
   ],
   theme: {
     extend: {

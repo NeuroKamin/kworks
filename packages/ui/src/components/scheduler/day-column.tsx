@@ -9,7 +9,9 @@ import { useScheduler } from "./SchedulerContext.js";
 const DayColumn = ({ date, events }: { date: Date, events: SchedulerEvent[] }) => {
     const { hoursFrom, hoursTo } = useScheduler();
     const isToday = date.toDateString() === new Date().toDateString();
-
+    const totalTime = events.reduce((acc, event) => acc + (event.end.getHours() - event.start.getHours()) * 60 + (event.end.getMinutes() - event.start.getMinutes()), 0);
+    const totalHours = Math.floor(totalTime / 60);
+    const totalMinutes = totalTime % 60;
     return <div className="flex flex-col w-full min-w-[140px]">
         <div className="text-xs text-muted-foreground border-b border-border flex items-center gap-2 p-2 leading-none">
             <div className={cn("text-3xl font-bold px-1 rounded-md", isToday ? "bg-blue-500/20" : "bg-transparent")}>
@@ -20,7 +22,7 @@ const DayColumn = ({ date, events }: { date: Date, events: SchedulerEvent[] }) =
                     {date.toLocaleDateString('ru-RU', { weekday: 'long' })}
                 </div>
                 <div className="font-extralight">
-                    00:00
+                    {`${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}`}
                 </div>
             </div>
         </div>

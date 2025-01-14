@@ -34,6 +34,22 @@ const events: SchedulerEvent[] = [
         end: new Date(2025, 0, 15, 18, 30, 0, 0), 
         color: "green" 
     },
+    { 
+        id: "4", 
+        title: "Event 4", 
+        project: "Project 4", 
+        start: new Date(2025, 0, 16, 10, 0, 0, 0), 
+        end: new Date(2025, 0, 16, 18, 30, 0, 0), 
+        color: "yellow" 
+    },
+    { 
+        id: "5", 
+        title: "Event 5", 
+        project: "Project 5", 
+        start: new Date(2025, 0, 17, 10, 0, 0, 0), 
+        end: new Date(2025, 0, 17, 18, 30, 0, 0), 
+        color: "purple" 
+    },
 ];
 
 const Scheduler = () => {
@@ -63,7 +79,7 @@ const Scheduler = () => {
                     <div className="text-sm text-muted-foreground">
                         {`${startOfWeek.toLocaleDateString('ru-RU', { month: 'long' })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
                     </div>
-                    <div className="flex items-center gap-0 w-fit border border-border rounded-md">
+                    <div className="flex items-center gap-0 w-fit rounded-md">
                         <Button onClick={() => setWeekOffset(weekOffset - 1)} size={"sm"} variant={"ghost"} className="rounded-r-none">
                             <ChevronLeft />
                         </Button>
@@ -76,7 +92,7 @@ const Scheduler = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-0">
+                <div className="flex items-start justify-center gap-0">
                     <TimeColumn />
                     {days.map((date, index) => (
                         <DayColumn key={index} 
