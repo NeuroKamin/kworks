@@ -29,12 +29,18 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
     const [startTime, setStartTime] = useState(event.start);
     const [endTime, setEndTime] = useState(event.end);
 
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStartY, setDragStartY] = useState(0);
+    const [dragStartX, setDragStartX] = useState(0);
+    const [initialPosition, setInitialPosition] = useState({ top: 0, left: 0 });
+
     const handleResizeStart = (e: React.MouseEvent<HTMLDivElement>, direction: 'top' | 'bottom') => {
         setIsResizing(true);
         setResizingDirection(direction);
         setInitialY(e.clientY);
         setInitialTop(top);
         setInitialHeight(height);
+        e.stopPropagation();
     };
 
     const handleResize = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -77,6 +83,44 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
         setResizingDirection(null);
     };
 
+    const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+        setIsDragging(true);
+        setDragStartY(e.clientY);
+        setDragStartX(e.clientX);
+        setInitialPosition({ 
+            top: top,
+            left: e.currentTarget.getBoundingClientRect().left 
+        });
+    };
+
+    const handleDrag = (e: MouseEvent) => {
+        if (!isDragging) return;
+
+        const diffY = e.clientY - dragStartY;
+        const diffX = e.clientX - dragStartX;
+        
+        // Привязка к сетке по вертикали (30 минут = 20px)
+        const gridSize = 20;
+        const newTop = Math.round((initialPosition.top + diffY) / gridSize) * gridSize;
+        
+        // Обновляем позицию
+        setTop(newTop);
+        
+        // Обновляем время начала события
+        const minutesDiff = ((newTop - initialPosition.top) / gridSize) * 30;
+        const newStartTime = new Date(event.start);
+        newStartTime.setMinutes(newStartTime.getMinutes() + minutesDiff);
+        setStartTime(newStartTime);
+        
+        const newEndTime = new Date(newStartTime);
+        newEndTime.setMinutes(newStartTime.getMinutes() + ((height) / gridSize) * 30);
+        setEndTime(newEndTime);
+    };
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+    };
+
     useEffect(() => {
         if (isResizing) {
             const handleMouseUp = () => handleResizeEnd();
@@ -94,19 +138,38 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
         }
     }, [isResizing]);
 
+    useEffect(() => {
+        if (isDragging) {
+            const handleMouseMove = (e: MouseEvent) => handleDrag(e);
+            const handleMouseUp = () => handleDragEnd();
+
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+
+            return () => {
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+        }
+    }, [isDragging]);
+
     return (
-        <div key={event.id} 
+        <div 
+            key={event.id} 
             className={cn(
                 "text-xs group flex flex-col justify-between absolute top-0 left-0 w-[99%]",
-                "rounded-sm p-3 cursor-pointer select-none transition-all",
+                "rounded-sm p-3 select-none transition-all",
                 "hover:shadow-xl",
                 `bg-${event.color}-500/50`,
                 `hover:bg-${event.color}-500/60`,
+                isDragging ? "cursor-grabbing" : "cursor-grab"
             )}
             style={{
                 top: `${top}px`,
                 height: `${height}px`,
-            }}>
+            }}
+            onMouseDown={handleDragStart}
+        >
 
             <div className="hidden group-hover:flex absolute top-0 py-1 left-0 w-full items-center justify-center cursor-row-resize"
                 onMouseDown={(e) => handleResizeStart(e, 'top')}
