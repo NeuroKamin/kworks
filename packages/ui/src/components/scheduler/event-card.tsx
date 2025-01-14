@@ -98,8 +98,8 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
         <div key={event.id} 
             className={cn(
                 "text-xs group flex flex-col justify-between absolute top-0 left-0 w-[99%]",
-                "rounded-sm p-3 cursor-pointer transition-all",
-                isResizing && "select-none",
+                "rounded-sm p-3 cursor-pointer select-none transition-all",
+                "hover:shadow-xl",
                 `bg-${event.color}-500/50`,
                 `hover:bg-${event.color}-500/60`,
             )}
