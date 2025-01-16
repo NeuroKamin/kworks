@@ -15,7 +15,7 @@ export type SchedulerEvent = {
 }
 
 const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (event: SchedulerEvent) => void }) => {
-    const { hoursFrom } = useScheduler();
+    const { hoursFrom, columnWidth } = useScheduler();
 
     const [isResizing, setIsResizing] = useState(false);
     const [resizingDirection, setResizingDirection] = useState<'top' | 'bottom' | null>(null);
@@ -32,6 +32,18 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
     const [dragStartY, setDragStartY] = useState(0);
     const [dragStartX, setDragStartX] = useState(0);
     const [initialPosition, setInitialPosition] = useState({ top: 0, left: 0 });
+
+    const calculateInitialLeft = () => {
+        const dayOfWeek = event.start.getDay();
+        const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        return adjustedDayOfWeek * columnWidth;
+    };
+
+    const [left, setLeft] = useState(calculateInitialLeft());
+
+    useEffect(() => {
+        setLeft(calculateInitialLeft());
+    }, [columnWidth]);
 
     const handleResizeStart = (e: React.MouseEvent<HTMLDivElement>, direction: 'top' | 'bottom') => {
         setIsResizing(true);
@@ -93,7 +105,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         setDragStartX(e.clientX);
         setInitialPosition({
             top: top,
-            left: e.currentTarget.getBoundingClientRect().left
+            left: left
         });
     };
 
@@ -103,25 +115,29 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         const diffY = e.clientY - dragStartY;
         const diffX = e.clientX - dragStartX;
 
-        // Привязка к сетке по вертикали (30 минут = 20px)
         const gridSize = 20;
         const newTop = Math.round((initialPosition.top + diffY) / gridSize) * gridSize;
+        const newLeft = Math.round((initialPosition.left + diffX) / columnWidth) * columnWidth;
+        const boundedLeft = Math.max(0, Math.min(newLeft, columnWidth * 6));
 
-        // Обновляем позицию
         setTop(newTop);
+        setLeft(boundedLeft);
 
-        // Обновляем время начала события
-        const minutesDiff = ((newTop - initialPosition.top) / gridSize) * 30;
-        const newStartTime = new Date(event.start);
-        newStartTime.setMinutes(newStartTime.getMinutes() + minutesDiff);
+        const newDayOfWeek = Math.floor(boundedLeft / columnWidth);
+        
+        const newDate = new Date(event.start);
+        const currentDayOfWeek = newDate.getDay();
+        const adjustedCurrentDay = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
+        const daysDiff = newDayOfWeek - (adjustedCurrentDay - 1);
+        newDate.setDate(newDate.getDate() + daysDiff);
 
-        const newEndTime = new Date(newStartTime);
-        newEndTime.setMinutes(newStartTime.getMinutes() + ((height) / gridSize) * 30);
+        const newEndDate = new Date(newDate);
+        newEndDate.setMinutes(newDate.getMinutes() + ((height) / gridSize) * 30);
 
         setEventState({
             ...eventState,
-            start: newStartTime,
-            end: newEndTime,
+            start: newDate,
+            end: newEndDate,
         });
     };
 
@@ -168,16 +184,19 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         <div
             key={event.id}
             className={cn(
+                "event-card",
                 "text-xs group flex flex-col justify-between absolute top-0 left-0 w-[99%]",
                 "rounded-sm p-3 select-none transition-colors",
-                "hover:shadow-xl",
+                "hover:shadow-xl z-20",
                 `bg-${event.color}-500/60`,
                 `hover:bg-${event.color}-500/80`,
                 isDragging ? "cursor-grabbing" : "cursor-grab"
             )}
             style={{
                 top: `${top}px`,
+                left: `${left}px`,
                 height: `${height}px`,
+                width: `${columnWidth - 1}px`,
             }}
             onMouseDown={handleDragStart}
         >

@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import DayColumn from "./day-column.js";
 import TimeColumn from "./time-column.js";
 import { Button } from "../button.js";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import EventCard, { SchedulerEvent } from "./event-card.js";
-import { SchedulerProvider } from './SchedulerContext.js';
+import { SchedulerProvider, useScheduler } from './SchedulerContext.js';
 
 interface SchedulerProps {
     events: SchedulerEvent[];
@@ -15,7 +15,23 @@ interface SchedulerProps {
     onUpdateEvent: (event: SchedulerEvent) => void;
 }
 
-const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent }: SchedulerProps) => {
+const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[], onUpdateEvent: (event: SchedulerEvent) => void }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { setColumnWidth } = useScheduler();
+
+    useEffect(() => {
+        const updateColumnWidth = () => {
+            if (containerRef.current) {
+                const containerWidth = containerRef.current.offsetWidth;
+                const newColumnWidth = Math.floor(containerWidth / 7);
+                setColumnWidth(newColumnWidth);
+            }
+        };
+
+        updateColumnWidth();
+        window.addEventListener('resize', updateColumnWidth);
+        return () => window.removeEventListener('resize', updateColumnWidth);
+    }, [setColumnWidth]);
 
     const [weekOffset, setWeekOffset] = useState(0);
 
@@ -39,51 +55,54 @@ const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent }: Schedul
     }
 
     return (
-        <SchedulerProvider hoursFrom={7} hoursTo={20}>
-            <div className="w-full">
-                <div className="flex items-center justify-end px-4 gap-4">
-                    <div className="text-sm text-muted-foreground">
-                        {`${startOfWeek.toLocaleDateString('ru-RU', { month: 'long' })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
-                    </div>
-                    <div className="flex items-center gap-0 w-fit rounded-md">
-                        <Button onClick={() => setWeekOffset(weekOffset - 1)} size={"sm"} variant={"ghost"} className="rounded-r-none">
-                            <ChevronLeft />
-                        </Button>
-                        <Button size={"sm"} variant={"ghost"} onClick={() => setWeekOffset(0)} className="rounded-none">
-                            Сегодня
-                        </Button>
-                        <Button onClick={() => setWeekOffset(weekOffset + 1)} size={"sm"} variant={"ghost"} className="rounded-l-none">
-                            <ChevronRight />
-                        </Button>
-                    </div>
+        <div className="w-full">
+            <div className="flex items-center justify-end px-4 gap-4">
+                <div className="text-sm text-muted-foreground">
+                    {`${startOfWeek.toLocaleDateString('ru-RU', { month: 'long' })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
                 </div>
+                <div className="flex items-center gap-0 w-fit rounded-md">
+                    <Button onClick={() => setWeekOffset(weekOffset - 1)} size={"sm"} variant={"ghost"} className="rounded-r-none">
+                        <ChevronLeft />
+                    </Button>
+                    <Button size={"sm"} variant={"ghost"} onClick={() => setWeekOffset(0)} className="rounded-none">
+                        Сегодня
+                    </Button>
+                    <Button onClick={() => setWeekOffset(weekOffset + 1)} size={"sm"} variant={"ghost"} className="rounded-l-none">
+                        <ChevronRight />
+                    </Button>
+                </div>
+            </div>
 
-                <div className="flex items-start justify-center gap-0">
-                    <TimeColumn />
-                    <div className="flex w-full h-full relative">
-                        {days.map((date, index) => (
-                            <DayColumn key={index}
-                                date={date}
-                                totalTime={events.filter((event) => event.start.toDateString() === date.toDateString()).reduce((acc, event) => acc + (event.end.getTime() - event.start.getTime()), 0)}
-                            />
-                        ))}
-                        <div className="absolute top-0 left-0 flex w-full h-full pt-[53px]">
-                            {days.map((date, index) => (
-
-                                <div className="relative w-full h-full overflow-hidden" key={date.toDateString()}>
-                                    {
-                                        events.filter((event) => event.start.toDateString() === date.toDateString()).map((event) => (
-                                            <EventCard key={event.id} event={event} onUpdate={handleUpdateEvent} />
-                                        ))
-                                    }
-                                </div>
-
+            <div className="flex items-start justify-center gap-0">
+                <TimeColumn />
+                <div ref={containerRef} className="flex w-full h-full relative">
+                    {days.map((date, index) => (
+                        <DayColumn key={index}
+                            date={date}
+                            totalTime={events.filter((event) => event.start.toDateString() === date.toDateString()).reduce((acc, event) => acc + (event.end.getTime() - event.start.getTime()), 0)}
+                        />
+                    ))}
+                    <div className="absolute top-0 left-0 flex w-full h-full pt-[53px]">
+                        <div className="z-10 relative w-full h-full overflow-y-hidden">
+                            {events.map((event) => (
+                                <EventCard 
+                                    key={event.id} 
+                                    event={event} 
+                                    onUpdate={handleUpdateEvent}
+                                />
                             ))}
                         </div>
                     </div>
-
                 </div>
             </div>
+        </div>
+    )
+}
+
+const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent }: SchedulerProps) => {
+    return (
+        <SchedulerProvider hoursFrom={7} hoursTo={20}>
+            <SchedulerContent events={events} onUpdateEvent={onUpdateEvent} />
         </SchedulerProvider>
     )
 }
