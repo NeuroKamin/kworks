@@ -52,16 +52,16 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         if (resizingDirection === 'top') {
             const newTop = Math.round((initialTop + diff) / gridSize) * gridSize;
             const newHeight = initialHeight - (newTop - initialTop);
-            
+
             if (newHeight >= gridSize) {
                 setTop(newTop);
                 setHeight(newHeight);
-                
+
                 // Обновляем время начала
                 const minutesDiff = ((newTop - initialTop) / gridSize) * minutesPerGrid;
                 const newStartTime = new Date(event.start);
                 newStartTime.setMinutes(newStartTime.getMinutes() + minutesDiff);
-                
+
 
                 setEventState({
                     ...eventState,
@@ -72,12 +72,12 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
             const newHeight = Math.round((initialHeight + diff) / gridSize) * gridSize;
             if (newHeight >= gridSize) {
                 setHeight(newHeight);
-                
+
                 // Обновляем время окончания
                 const minutesDiff = ((newHeight - initialHeight) / gridSize) * minutesPerGrid;
                 const newEndTime = new Date(event.end);
                 newEndTime.setMinutes(newEndTime.getMinutes() + minutesDiff);
-                
+
 
                 setEventState({
                     ...eventState,
@@ -91,9 +91,9 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         setIsDragging(true);
         setDragStartY(e.clientY);
         setDragStartX(e.clientX);
-        setInitialPosition({ 
+        setInitialPosition({
             top: top,
-            left: e.currentTarget.getBoundingClientRect().left 
+            left: e.currentTarget.getBoundingClientRect().left
         });
     };
 
@@ -102,14 +102,14 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
 
         const diffY = e.clientY - dragStartY;
         const diffX = e.clientX - dragStartX;
-        
+
         // Привязка к сетке по вертикали (30 минут = 20px)
         const gridSize = 20;
         const newTop = Math.round((initialPosition.top + diffY) / gridSize) * gridSize;
-        
+
         // Обновляем позицию
         setTop(newTop);
-        
+
         // Обновляем время начала события
         const minutesDiff = ((newTop - initialPosition.top) / gridSize) * 30;
         const newStartTime = new Date(event.start);
@@ -117,7 +117,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
 
         const newEndTime = new Date(newStartTime);
         newEndTime.setMinutes(newStartTime.getMinutes() + ((height) / gridSize) * 30);
-        
+
         setEventState({
             ...eventState,
             start: newStartTime,
@@ -165,14 +165,14 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
     }, [isDragging, eventState, onUpdate]);
 
     return (
-        <div 
-            key={event.id} 
+        <div
+            key={event.id}
             className={cn(
                 "text-xs group flex flex-col justify-between absolute top-0 left-0 w-[99%]",
-                "rounded-sm p-3 select-none transition-all",
+                "rounded-sm p-3 select-none transition-colors",
                 "hover:shadow-xl",
-                `bg-${event.color}-500/50`,
-                `hover:bg-${event.color}-500/60`,
+                `bg-${event.color}-500/60`,
+                `hover:bg-${event.color}-500/80`,
                 isDragging ? "cursor-grabbing" : "cursor-grab"
             )}
             style={{
@@ -198,8 +198,13 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
                     <span className="font-bold">{event.title}</span>
                     <span className="text-xs opacity-75">{event.project}</span>
                 </div>
-                <span className="text-xs opacity-75">
-                    {format(eventState.start, 'HH:mm')} - {format(eventState.end, 'HH:mm')}
+                <span className="text-xs opacity-75 flex items-center justify-between">
+                    <div>
+                        {format(eventState.start, 'HH:mm')} - {format(eventState.end, 'HH:mm')}
+                    </div>
+                    <div className="font-bold">
+                        {Math.round((eventState.end.getTime() - eventState.start.getTime()) / (1000 * 60 * 60) * 10) / 10}ч
+                    </div>
                 </span>
             </div>
         </div>

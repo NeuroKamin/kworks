@@ -64,7 +64,7 @@ const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent }: Schedul
                         {days.map((date, index) => (
                             <DayColumn key={index}
                                 date={date}
-                                totalTime={0}
+                                totalTime={events.filter((event) => event.start.toDateString() === date.toDateString()).reduce((acc, event) => acc + (event.end.getTime() - event.start.getTime()), 0)}
                             />
                         ))}
                         <div className="absolute top-0 left-0 flex w-full h-full pt-[53px]">

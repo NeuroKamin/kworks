@@ -18,8 +18,8 @@ const DayColumn = ({ date, totalTime }: { date: Date, totalTime: number }) => {
                 <div>
                     {date.toLocaleDateString('ru-RU', { weekday: 'long' })}
                 </div>
-                <div className="font-extralight">
-                    {`${totalHours.toString().padStart(2, '0')}:${totalMinutes.toString().padStart(2, '0')}`}
+                <div className="font-semibold">
+                    {Math.round(totalTime / (1000 * 60 * 60) * 10) / 10}ч
                 </div>
             </div>
         </div>
