@@ -5,54 +5,17 @@ import DayColumn from "./day-column.js";
 import TimeColumn from "./time-column.js";
 import { Button } from "../button.js";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { SchedulerEvent } from "./event-card.js";
+import EventCard, { SchedulerEvent } from "./event-card.js";
 import { SchedulerProvider } from './SchedulerContext.js';
 
+interface SchedulerProps {
+    events: SchedulerEvent[];
+    onAddEvent: (event: SchedulerEvent) => void;
+    onRemoveEvent: (event: SchedulerEvent) => void;
+    onUpdateEvent: (event: SchedulerEvent) => void;
+}
 
-const events: SchedulerEvent[] = [
-    { 
-        id: "1", 
-        title: "Event 1", 
-        project: "Project 1", 
-        start: new Date(2025, 0, 13, 8, 30, 0, 0), 
-        end: new Date(2025, 0, 13, 12, 0, 0, 0), 
-        color: "red" 
-    },
-    { 
-        id: "2", 
-        title: "Event 2", 
-        project: "Project 2", 
-        start: new Date(2025, 0, 14, 9, 0, 0, 0), 
-        end: new Date(2025, 0, 14, 14, 0, 0, 0), 
-        color: "blue" 
-    },
-    { 
-        id: "3", 
-        title: "Event 3", 
-        project: "Project 3", 
-        start: new Date(2025, 0, 15, 10, 0, 0, 0), 
-        end: new Date(2025, 0, 15, 18, 30, 0, 0), 
-        color: "green" 
-    },
-    { 
-        id: "4", 
-        title: "Event 4", 
-        project: "Project 4", 
-        start: new Date(2025, 0, 16, 10, 0, 0, 0), 
-        end: new Date(2025, 0, 16, 18, 30, 0, 0), 
-        color: "yellow" 
-    },
-    { 
-        id: "5", 
-        title: "Event 5", 
-        project: "Project 5", 
-        start: new Date(2025, 0, 17, 10, 0, 0, 0), 
-        end: new Date(2025, 0, 17, 18, 30, 0, 0), 
-        color: "purple" 
-    },
-];
-
-const Scheduler = () => {
+const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent }: SchedulerProps) => {
 
     const [weekOffset, setWeekOffset] = useState(0);
 
@@ -71,6 +34,9 @@ const Scheduler = () => {
         return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
     })();
 
+    const handleUpdateEvent = (event: SchedulerEvent) => {
+        onUpdateEvent(event);
+    }
 
     return (
         <SchedulerProvider hoursFrom={7} hoursTo={20}>
@@ -94,11 +60,28 @@ const Scheduler = () => {
 
                 <div className="flex items-start justify-center gap-0">
                     <TimeColumn />
-                    {days.map((date, index) => (
-                        <DayColumn key={index} 
-                            date={date} 
-                            events={events.filter((event) => event.start.toDateString() === date.toDateString())} />
-                    ))}
+                    <div className="flex w-full h-full relative">
+                        {days.map((date, index) => (
+                            <DayColumn key={index}
+                                date={date}
+                                totalTime={0}
+                            />
+                        ))}
+                        <div className="absolute top-0 left-0 flex w-full h-full pt-[53px]">
+                            {days.map((date, index) => (
+
+                                <div className="relative w-full h-full overflow-hidden" key={date.toDateString()}>
+                                    {
+                                        events.filter((event) => event.start.toDateString() === date.toDateString()).map((event) => (
+                                            <EventCard key={event.id} event={event} onUpdate={handleUpdateEvent} />
+                                        ))
+                                    }
+                                </div>
+
+                            ))}
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </SchedulerProvider>

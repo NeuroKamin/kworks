@@ -2,14 +2,11 @@
 
 import { cn } from "@workspace/ui/lib/utils.js";
 import HourCell from "./hour-cell.js";
-import EventCard, { SchedulerEvent } from "./event-card.js";
 import { useScheduler } from "./SchedulerContext.js";
 
-
-const DayColumn = ({ date, events }: { date: Date, events: SchedulerEvent[] }) => {
+const DayColumn = ({ date, totalTime }: { date: Date, totalTime: number }) => {
     const { hoursFrom, hoursTo } = useScheduler();
     const isToday = date.toDateString() === new Date().toDateString();
-    const totalTime = events.reduce((acc, event) => acc + (event.end.getHours() - event.start.getHours()) * 60 + (event.end.getMinutes() - event.start.getMinutes()), 0);
     const totalHours = Math.floor(totalTime / 60);
     const totalMinutes = totalTime % 60;
     return <div className="flex flex-col w-full min-w-[140px]">
@@ -30,11 +27,7 @@ const DayColumn = ({ date, events }: { date: Date, events: SchedulerEvent[] }) =
             {Array.from({ length: hoursTo - hoursFrom }).map((_, index) => (
                 <HourCell key={index} day={date.getDate()} hour={hoursFrom + index} />
             ))}
-            {
-                events.map((event) => (
-                    <EventCard key={event.id} event={event} />
-                ))
-            }
+            
         </div>
         
         

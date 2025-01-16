@@ -14,7 +14,7 @@ export type SchedulerEvent = {
     color: string;
 }
 
-const EventCard = ({ event }: { event: SchedulerEvent }) => {
+const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (event: SchedulerEvent) => void }) => {
     const { hoursFrom } = useScheduler();
 
     const [isResizing, setIsResizing] = useState(false);
@@ -23,11 +23,10 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
     const [initialTop, setInitialTop] = useState(0);
     const [initialHeight, setInitialHeight] = useState(0);
 
+    const [eventState, setEventState] = useState(event);
+
     const [top, setTop] = useState((event.start.getHours() - hoursFrom) * 40 + (event.start.getMinutes() / 30) * 20);
     const [height, setHeight] = useState((event.end.getHours() - event.start.getHours()) * 40 + ((event.end.getMinutes() - event.start.getMinutes()) / 30) * 20);
-
-    const [startTime, setStartTime] = useState(event.start);
-    const [endTime, setEndTime] = useState(event.end);
 
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartY, setDragStartY] = useState(0);
@@ -62,7 +61,12 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
                 const minutesDiff = ((newTop - initialTop) / gridSize) * minutesPerGrid;
                 const newStartTime = new Date(event.start);
                 newStartTime.setMinutes(newStartTime.getMinutes() + minutesDiff);
-                setStartTime(newStartTime);
+                
+
+                setEventState({
+                    ...eventState,
+                    start: newStartTime,
+                });
             }
         } else {
             const newHeight = Math.round((initialHeight + diff) / gridSize) * gridSize;
@@ -73,14 +77,14 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
                 const minutesDiff = ((newHeight - initialHeight) / gridSize) * minutesPerGrid;
                 const newEndTime = new Date(event.end);
                 newEndTime.setMinutes(newEndTime.getMinutes() + minutesDiff);
-                setEndTime(newEndTime);
+                
+
+                setEventState({
+                    ...eventState,
+                    end: newEndTime,
+                });
             }
         }
-    };
-
-    const handleResizeEnd = () => {
-        setIsResizing(false);
-        setResizingDirection(null);
     };
 
     const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -110,20 +114,24 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
         const minutesDiff = ((newTop - initialPosition.top) / gridSize) * 30;
         const newStartTime = new Date(event.start);
         newStartTime.setMinutes(newStartTime.getMinutes() + minutesDiff);
-        setStartTime(newStartTime);
-        
+
         const newEndTime = new Date(newStartTime);
         newEndTime.setMinutes(newStartTime.getMinutes() + ((height) / gridSize) * 30);
-        setEndTime(newEndTime);
-    };
-
-    const handleDragEnd = () => {
-        setIsDragging(false);
+        
+        setEventState({
+            ...eventState,
+            start: newStartTime,
+            end: newEndTime,
+        });
     };
 
     useEffect(() => {
         if (isResizing) {
-            const handleMouseUp = () => handleResizeEnd();
+            const handleMouseUp = () => {
+                setIsResizing(false);
+                setResizingDirection(null);
+                onUpdate(eventState);
+            };
             const handleMouseMove = (e: MouseEvent) => {
                 handleResize({ clientY: e.clientY } as React.MouseEvent<HTMLDivElement>);
             };
@@ -136,12 +144,15 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
                 document.removeEventListener('mouseup', handleMouseUp);
             };
         }
-    }, [isResizing]);
+    }, [isResizing, eventState, onUpdate]);
 
     useEffect(() => {
         if (isDragging) {
             const handleMouseMove = (e: MouseEvent) => handleDrag(e);
-            const handleMouseUp = () => handleDragEnd();
+            const handleMouseUp = () => {
+                setIsDragging(false);
+                onUpdate(eventState);
+            };
 
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
@@ -151,7 +162,7 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
                 document.removeEventListener('mouseup', handleMouseUp);
             };
         }
-    }, [isDragging]);
+    }, [isDragging, eventState, onUpdate]);
 
     return (
         <div 
@@ -188,7 +199,7 @@ const EventCard = ({ event }: { event: SchedulerEvent }) => {
                     <span className="text-xs opacity-75">{event.project}</span>
                 </div>
                 <span className="text-xs opacity-75">
-                    {format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')}
+                    {format(eventState.start, 'HH:mm')} - {format(eventState.end, 'HH:mm')}
                 </span>
             </div>
         </div>
