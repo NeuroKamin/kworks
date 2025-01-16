@@ -24,7 +24,6 @@ export default function Scheduler({ events }: { events: SchedulerEvent[] }) {
     }
 
     const onUpdateEvent = (event: SchedulerEvent) => {
-        console.log(event);
         eventsStore.send({ type: 'update', event });
     }
 
