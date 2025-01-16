@@ -7,15 +7,21 @@ import { Button } from "../button.js";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import EventCard, { SchedulerEvent } from "./event-card.js";
 import { SchedulerProvider, useScheduler } from './SchedulerContext.js';
+import { getWeek } from "@workspace/ui/lib/utils.js";
 
 interface SchedulerProps {
     events: SchedulerEvent[];
-    onAddEvent: (event: SchedulerEvent) => void;
-    onRemoveEvent: (event: SchedulerEvent) => void;
-    onUpdateEvent: (event: SchedulerEvent) => void;
+    onAddEvent?: (event: SchedulerEvent) => void;
+    onRemoveEvent?: (event: SchedulerEvent) => void;
+    onUpdateEvent?: (event: SchedulerEvent) => void;
+    onWeekChange?: (start: Date, end: Date) => void;
 }
 
-const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[], onUpdateEvent: (event: SchedulerEvent) => void }) => {
+const SchedulerContent = ({
+    events,
+    onUpdateEvent,
+    onWeekChange
+}: SchedulerProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { setColumnWidth } = useScheduler();
 
@@ -38,6 +44,7 @@ const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[],
     const today = new Date();
     const dayOfWeek = today.getDay();
     const startOfWeek = new Date(today.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1) + weekOffset * 7));
+
     const days = Array.from({ length: 7 }, (_, i) => {
         const date = new Date(startOfWeek);
         date.setDate(startOfWeek.getDate() + i);
@@ -51,7 +58,27 @@ const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[],
     })();
 
     const handleUpdateEvent = (event: SchedulerEvent) => {
-        onUpdateEvent(event);
+        onUpdateEvent?.(event);
+    }
+
+    const nextWeek = () => {
+        setWeekOffset(weekOffset + 1);
+        handleWeekChange(weekOffset + 1);
+    }
+
+    const prevWeek = () => {
+        setWeekOffset(weekOffset - 1);
+        handleWeekChange(weekOffset - 1);
+    }
+
+    const todayWeek = () => {
+        setWeekOffset(0);
+        handleWeekChange(0);
+    }
+
+    const handleWeekChange = (offset: number) => {
+        const { startOfWeek, endOfWeek } = getWeek(offset);
+        onWeekChange?.(startOfWeek, endOfWeek);
     }
 
     return (
@@ -61,13 +88,13 @@ const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[],
                     {`${startOfWeek.toLocaleDateString('ru-RU', { month: 'long' })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
                 </div>
                 <div className="flex items-center gap-0 w-fit rounded-md">
-                    <Button onClick={() => setWeekOffset(weekOffset - 1)} size={"sm"} variant={"ghost"} className="rounded-r-none">
+                    <Button onClick={prevWeek} size={"sm"} variant={"ghost"} className="rounded-r-none">
                         <ChevronLeft />
                     </Button>
-                    <Button size={"sm"} variant={"ghost"} onClick={() => setWeekOffset(0)} className="rounded-none">
+                    <Button size={"sm"} variant={"ghost"} onClick={todayWeek} className="rounded-none">
                         Сегодня
                     </Button>
-                    <Button onClick={() => setWeekOffset(weekOffset + 1)} size={"sm"} variant={"ghost"} className="rounded-l-none">
+                    <Button onClick={nextWeek} size={"sm"} variant={"ghost"} className="rounded-l-none">
                         <ChevronRight />
                     </Button>
                 </div>
@@ -85,9 +112,9 @@ const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[],
                     <div className="absolute top-0 left-0 flex w-full h-full pt-[53px]">
                         <div className="z-10 relative w-full h-full overflow-y-hidden">
                             {events.map((event) => (
-                                <EventCard 
-                                    key={event.id} 
-                                    event={event} 
+                                <EventCard
+                                    key={event.id}
+                                    event={event}
                                     onUpdate={handleUpdateEvent}
                                 />
                             ))}
@@ -99,10 +126,14 @@ const SchedulerContent = ({ events, onUpdateEvent }: { events: SchedulerEvent[],
     )
 }
 
-const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent }: SchedulerProps) => {
+const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent, onWeekChange }: SchedulerProps) => {
     return (
         <SchedulerProvider hoursFrom={7} hoursTo={20}>
-            <SchedulerContent events={events} onUpdateEvent={onUpdateEvent} />
+            <SchedulerContent
+                events={events}
+                onUpdateEvent={onUpdateEvent}
+                onWeekChange={onWeekChange}
+            />
         </SchedulerProvider>
     )
 }

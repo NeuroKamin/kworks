@@ -124,7 +124,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         setLeft(boundedLeft);
 
         const newDayOfWeek = Math.floor(boundedLeft / columnWidth);
-        
+
         const newDate = new Date(event.start);
         const currentDayOfWeek = newDate.getDay();
         const adjustedCurrentDay = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
@@ -186,7 +186,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
             className={cn(
                 "event-card",
                 "text-xs group flex flex-col justify-between absolute top-0 left-0 w-[99%]",
-                "rounded-sm p-3 select-none transition-colors",
+                "rounded-sm p-3 select-none transition-colors overflow-hidden",
                 "hover:shadow-xl z-20",
                 `bg-${event.color}-500/60`,
                 `hover:bg-${event.color}-500/80`,
