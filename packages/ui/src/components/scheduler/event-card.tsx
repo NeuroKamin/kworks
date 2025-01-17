@@ -14,6 +14,9 @@ export type SchedulerEvent = {
     color: string;
 }
 
+const gridSize = 28;
+const minutesPerGrid = 30;
+
 const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (event: SchedulerEvent) => void }) => {
     const { hoursFrom, columnWidth } = useScheduler();
 
@@ -25,8 +28,8 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
 
     const [eventState, setEventState] = useState(event);
 
-    const [top, setTop] = useState((event.start.getHours() - hoursFrom) * 40 + (event.start.getMinutes() / 30) * 20);
-    const [height, setHeight] = useState((event.end.getHours() - event.start.getHours()) * 40 + ((event.end.getMinutes() - event.start.getMinutes()) / 30) * 20);
+    const [top, setTop] = useState((event.start.getHours() - hoursFrom) * 2 * gridSize + (event.start.getMinutes() / 30) * gridSize);
+    const [height, setHeight] = useState((event.end.getHours() - event.start.getHours()) * 2 * gridSize + ((event.end.getMinutes() - event.start.getMinutes()) / 30) * gridSize);
 
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartY, setDragStartY] = useState(0);
@@ -58,8 +61,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         if (!isResizing) return;
 
         const diff = e.clientY - initialY;
-        const gridSize = 20; // 20px grid
-        const minutesPerGrid = 30; // 30 minutes per 20px
+
 
         if (resizingDirection === 'top') {
             const newTop = Math.round((initialTop + diff) / gridSize) * gridSize;
@@ -115,7 +117,6 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         const diffY = e.clientY - dragStartY;
         const diffX = e.clientX - dragStartX;
 
-        const gridSize = 20;
         const newTop = Math.round((initialPosition.top + diffY) / gridSize) * gridSize;
         const newLeft = Math.round((initialPosition.left + diffX) / columnWidth) * columnWidth;
         const boundedLeft = Math.max(0, Math.min(newLeft, columnWidth * 6));
@@ -123,20 +124,30 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         setTop(newTop);
         setLeft(boundedLeft);
 
+        // Вычисляем новый день недели
         const newDayOfWeek = Math.floor(boundedLeft / columnWidth);
 
-        const newDate = new Date(event.start);
-        const currentDayOfWeek = newDate.getDay();
+        // Создаем новую дату начала
+        const newStartDate = new Date(event.start);
+        const currentDayOfWeek = newStartDate.getDay();
         const adjustedCurrentDay = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
         const daysDiff = newDayOfWeek - (adjustedCurrentDay - 1);
-        newDate.setDate(newDate.getDate() + daysDiff);
+        newStartDate.setDate(newStartDate.getDate() + daysDiff);
 
-        const newEndDate = new Date(newDate);
-        newEndDate.setMinutes(newDate.getMinutes() + ((height) / gridSize) * 30);
+        // Обновляем время в соответствии с новой позицией по вертикали
+        const hoursFromTop = newTop / (gridSize * 2);
+        const minutesFromTop = (newTop % (gridSize * 2)) / gridSize * 30;
+
+        newStartDate.setHours(hoursFrom + Math.floor(hoursFromTop));
+        newStartDate.setMinutes(Math.floor(minutesFromTop));
+
+        // Создаем новую дату окончания, сохраняя длительность события
+        const newEndDate = new Date(newStartDate);
+        newEndDate.setMinutes(newStartDate.getMinutes() + ((height) / gridSize) * 30);
 
         setEventState({
             ...eventState,
-            start: newDate,
+            start: newStartDate,
             end: newEndDate,
         });
     };
@@ -180,12 +191,14 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         }
     }, [isDragging, eventState, onUpdate]);
 
+
+    const hours = Math.round((eventState.end.getTime() - eventState.start.getTime()) / (1000 * 60 * 60) * 10) / 10;
     return (
         <div
             key={event.id}
             className={cn(
                 "event-card",
-                "text-xs group flex flex-col justify-between absolute top-0 left-0 w-[99%]",
+                "text-xs group flex flex-col justify-between absolute top-0 left-0",
                 "rounded-sm p-3 select-none transition-colors overflow-hidden",
                 "hover:shadow-xl z-20",
                 `bg-${event.color}-500/60`,
@@ -213,16 +226,19 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
             </div>
 
             <div className="flex h-full flex-col gap-1 justify-between">
-                <div className="flex flex-col gap-0">
-                    <span className="font-bold">{event.title}</span>
-                    <span className="text-xs opacity-75">{event.project}</span>
+                <div className="flex flex-col gap-1">
+                    {
+                        hours > 1 && <span className="text-xs font-semibold">{event.project}</span>
+                    }
+                    <span className="">{event.title}</span>
                 </div>
                 <span className="text-xs opacity-75 flex items-center justify-between">
                     <div>
+
                         {format(eventState.start, 'HH:mm')} - {format(eventState.end, 'HH:mm')}
                     </div>
                     <div className="font-bold">
-                        {Math.round((eventState.end.getTime() - eventState.start.getTime()) / (1000 * 60 * 60) * 10) / 10}ч
+                        {hours}ч
                     </div>
                 </span>
             </div>

@@ -9,7 +9,7 @@ const TimeColumn = () => {
             <div className="h-[48px]" />
             <div className="flex flex-col text-muted-foreground text-xs">
                 {Array.from({ length: hoursTo - hoursFrom + 1 }).map((_, index) => (
-                    <div key={index} className="h-10 flex items-start justify-end pr-3 leading-none">
+                    <div key={index} className="h-14 flex items-start justify-end pr-3 leading-none">
                         {hoursFrom + index}:00
                     </div>
                 ))}
