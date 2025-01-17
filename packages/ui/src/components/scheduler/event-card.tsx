@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useScheduler } from "./SchedulerContext.js";
 import { format } from 'date-fns';
 import { cn } from "@workspace/ui/lib/utils.js";
+import { gridSize, minutesPerGrid } from "./constants.js";
 
 export type SchedulerEvent = {
     id: string;
@@ -14,10 +15,13 @@ export type SchedulerEvent = {
     color: string;
 }
 
-const gridSize = 28;
-const minutesPerGrid = 30;
-
-const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (event: SchedulerEvent) => void }) => {
+const EventCard = ({ event, onUpdate, onAdd, autoResize, creatingY }: {
+    event: SchedulerEvent,
+    onUpdate?: (event: SchedulerEvent) => void,
+    onAdd?: (event: SchedulerEvent) => void,
+    autoResize?: boolean,
+    creatingY?: number,
+}) => {
     const { hoursFrom, columnWidth } = useScheduler();
 
     const [isResizing, setIsResizing] = useState(false);
@@ -25,6 +29,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
     const [initialY, setInitialY] = useState(0);
     const [initialTop, setInitialTop] = useState(0);
     const [initialHeight, setInitialHeight] = useState(0);
+    const bottomResizeRef = useRef<HTMLDivElement>(null);
 
     const [eventState, setEventState] = useState(event);
 
@@ -153,11 +158,24 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
     };
 
     useEffect(() => {
+        if (autoResize) {
+            bottomResizeRef.current?.dispatchEvent(new MouseEvent('mousedown', {
+                bubbles: true,
+                clientY: creatingY
+            }));
+        }
+    }, []);
+
+    useEffect(() => {
         if (isResizing) {
             const handleMouseUp = () => {
                 setIsResizing(false);
                 setResizingDirection(null);
-                onUpdate(eventState);
+                if (autoResize) {
+                    onAdd?.(eventState);
+                } else {
+                    onUpdate?.(eventState);
+                }
             };
             const handleMouseMove = (e: MouseEvent) => {
                 handleResize({ clientY: e.clientY } as React.MouseEvent<HTMLDivElement>);
@@ -171,14 +189,14 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
                 document.removeEventListener('mouseup', handleMouseUp);
             };
         }
-    }, [isResizing, eventState, onUpdate]);
+    }, [isResizing, eventState, onUpdate, autoResize]);
 
     useEffect(() => {
         if (isDragging) {
             const handleMouseMove = (e: MouseEvent) => handleDrag(e);
             const handleMouseUp = () => {
                 setIsDragging(false);
-                onUpdate(eventState);
+                onUpdate?.(eventState);
             };
 
             document.addEventListener('mousemove', handleMouseMove);
@@ -191,7 +209,6 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
         }
     }, [isDragging, eventState, onUpdate]);
 
-
     const hours = Math.round((eventState.end.getTime() - eventState.start.getTime()) / (1000 * 60 * 60) * 10) / 10;
     return (
         <div
@@ -200,7 +217,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
                 "event-card",
                 "text-xs group flex flex-col justify-between absolute top-0 left-0",
                 "rounded-sm p-3 select-none transition-colors overflow-hidden",
-                "hover:shadow-xl z-20",
+                "hover:shadow-xl z-20 pointer-events-auto",
                 `bg-${event.color}-500/60`,
                 `hover:bg-${event.color}-500/80`,
                 isDragging ? "cursor-grabbing" : "cursor-grab"
@@ -219,7 +236,7 @@ const EventCard = ({ event, onUpdate }: { event: SchedulerEvent, onUpdate: (even
             >
                 <div className="w-16 h-1 bg-white/40 rounded-full" />
             </div>
-            <div className="hidden group-hover:flex absolute bottom-0 py-1 left-0 w-full items-center justify-center cursor-row-resize"
+            <div ref={bottomResizeRef} className="hidden group-hover:flex absolute bottom-0 py-1 left-0 w-full items-center justify-center cursor-row-resize"
                 onMouseDown={(e) => handleResizeStart(e, 'bottom')}
             >
                 <div className="w-16 h-1 bg-white/40 rounded-full" />

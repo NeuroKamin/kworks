@@ -24,7 +24,7 @@ export default function Scheduler({ events }: { events: SchedulerEvent[] }) {
     const storeEvents = useSelector(eventsStore, (state) => state.context.events);
 
     const onAddEvent = (event: SchedulerEvent) => {
-        console.log(event);
+        eventsStore.send({ type: 'add', event });
     }
 
     const onRemoveEvent = (event: SchedulerEvent) => {

@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import EventCard, { SchedulerEvent } from "./event-card.js";
 import { SchedulerProvider, useScheduler } from './SchedulerContext.js';
 import { getWeek } from "@workspace/ui/lib/utils.js";
+import { gridSize, minutesPerGrid } from "./constants.js";
 
 interface SchedulerProps {
     events: SchedulerEvent[];
@@ -20,10 +21,15 @@ interface SchedulerProps {
 const SchedulerContent = ({
     events,
     onUpdateEvent,
-    onWeekChange
+    onWeekChange,
+    onAddEvent
 }: SchedulerProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const { setColumnWidth } = useScheduler();
+    const [isCreating, setIsCreating] = useState(false);
+    const [creatingEvent, setCreatingEvent] = useState<SchedulerEvent | null>(null);
+    const [initialY, setInitialY] = useState(0);
+    const { columnWidth } = useScheduler();
 
     useEffect(() => {
         const updateColumnWidth = () => {
@@ -61,6 +67,11 @@ const SchedulerContent = ({
         onUpdateEvent?.(event);
     }
 
+    const handleAddEvent = (event: SchedulerEvent) => {
+        setCreatingEvent(null);
+        onAddEvent?.(event);
+    }
+
     const nextWeek = () => {
         setWeekOffset(weekOffset + 1);
         handleWeekChange(weekOffset + 1);
@@ -81,6 +92,28 @@ const SchedulerContent = ({
         onWeekChange?.(startOfWeek, endOfWeek);
     }
 
+    const handleCreateStart = (day: number, hour: number, hourPart: number, e: React.MouseEvent) => {
+        const startDate = new Date(days[day]!);
+        startDate.setHours(hour);
+        startDate.setMinutes(hourPart * minutesPerGrid);
+
+        const endDate = new Date(startDate);
+        endDate.setMinutes(startDate.getMinutes() + minutesPerGrid);
+
+        const newEvent: SchedulerEvent = {
+            id: `temp-${Date.now()}`,
+            title: "",
+            project: "",
+            start: startDate,
+            end: endDate,
+            color: "slate"
+        };
+
+        setCreatingEvent(newEvent);
+        setIsCreating(true);
+        setInitialY(e.clientY);
+    };
+
     return (
         <div className="w-full">
             <div className="flex items-center justify-end px-4 gap-4">
@@ -100,17 +133,26 @@ const SchedulerContent = ({
                 </div>
             </div>
 
-            <div className="flex items-start justify-center gap-0">
+            <div ref={containerRef} className="flex w-full h-full relative">
                 <TimeColumn />
-                <div ref={containerRef} className="flex w-full h-full relative">
-                    {days.map((date, index) => (
-                        <DayColumn key={index}
-                            date={date}
-                            totalTime={events.filter((event) => event.start.toDateString() === date.toDateString()).reduce((acc, event) => acc + (event.end.getTime() - event.start.getTime()), 0)}
-                        />
-                    ))}
-                    <div className="absolute top-0 left-0 flex w-full h-full pt-[53px]">
-                        <div className="z-10 relative w-full h-full overflow-y-hidden">
+                <div className="flex-1 flex relative">
+                    <div className="absolute inset-0 flex">
+                        {days.map((date, index) => (
+                            <DayColumn
+                                key={index}
+                                date={date}
+                                totalTime={events.filter((event) =>
+                                    event.start.toDateString() === date.toDateString()
+                                ).reduce((acc, event) =>
+                                    acc + (event.end.getTime() - event.start.getTime()), 0
+                                )}
+                                onCreateStart={handleCreateStart}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="absolute inset-0 pointer-events-none pt-[53px]">
+                        <div className="relative w-full h-full">
                             {events.map((event) => (
                                 <EventCard
                                     key={event.id}
@@ -118,6 +160,16 @@ const SchedulerContent = ({
                                     onUpdate={handleUpdateEvent}
                                 />
                             ))}
+                            {creatingEvent && (
+
+                                <EventCard
+                                    event={creatingEvent}
+                                    onAdd={handleAddEvent}
+                                    autoResize={isCreating}
+                                    creatingY={initialY}
+                                />
+
+                            )}
                         </div>
                     </div>
                 </div>
@@ -133,6 +185,7 @@ const Scheduler = ({ events, onAddEvent, onRemoveEvent, onUpdateEvent, onWeekCha
                 events={events}
                 onUpdateEvent={onUpdateEvent}
                 onWeekChange={onWeekChange}
+                onAddEvent={onAddEvent}
             />
         </SchedulerProvider>
     )

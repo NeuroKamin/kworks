@@ -80,7 +80,6 @@ export const getEvents = async (startOfWeek: Date, endOfWeek: Date) => {
     ];
 
     return events.filter(event => {
-        console.log(event.start, event.end);
         const eventDate = event.start.getDate();
         const startDate = startOfWeek.getDate();
         const endDate = endOfWeek.getDate();

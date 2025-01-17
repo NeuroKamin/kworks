@@ -10,9 +10,8 @@ const config = {
     "../../packages/ui/src/components/**/*.{ts,tsx}",
   ],
   safelist: [
-    
     { 
-      pattern: new RegExp(`bg-(${colors.join("|")})-.+`),
+      pattern: new RegExp(`bg-(${colors.join("|")}|slate)-.+`),
       variants: ['hover']
      }
   ],
