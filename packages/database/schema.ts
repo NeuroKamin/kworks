@@ -6,6 +6,7 @@ import { tasks } from './models/tasks';
 import { availableFields, fieldValues, fieldPermissions } from './models/customFields';
 import { boards, columns } from './models/boards';
 import { invitations } from './models/invitations';
+import { timeTracking, timeTrackingRelations } from './models/timeTracking';
 
 export {
     users,
@@ -32,4 +33,6 @@ export {
     boards,
     columns,
     invitations,
+    timeTracking,
+    timeTrackingRelations,
 };
