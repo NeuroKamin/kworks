@@ -1,5 +1,5 @@
 CREATE TABLE "account" (
-	"userId" uuid NOT NULL,
+	"userId" text NOT NULL,
 	"type" text NOT NULL,
 	"provider" text NOT NULL,
 	"providerAccountId" text NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE "account" (
 );
 --> statement-breakpoint
 CREATE TABLE "available_fields" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"entity_type" text NOT NULL,
 	"field_name" text NOT NULL,
 	"field_type" text NOT NULL,
@@ -24,44 +24,44 @@ CREATE TABLE "available_fields" (
 );
 --> statement-breakpoint
 CREATE TABLE "boards" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"project_id" uuid NOT NULL,
+	"project_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "columns" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"board_id" uuid NOT NULL,
+	"board_id" text NOT NULL,
 	"order" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "field_permissions" (
-	"field_id" uuid NOT NULL,
-	"role_id" uuid NOT NULL,
+	"field_id" text NOT NULL,
+	"role_id" text NOT NULL,
 	"can_view" boolean DEFAULT false NOT NULL,
 	"can_edit" boolean DEFAULT false NOT NULL,
 	CONSTRAINT "field_permissions_field_id_role_id_pk" PRIMARY KEY("field_id","role_id")
 );
 --> statement-breakpoint
 CREATE TABLE "field_values" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"field_id" uuid NOT NULL,
-	"entity_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"field_id" text NOT NULL,
+	"entity_id" text NOT NULL,
 	"value" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "invitations" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
 	"token" text NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"organization_id" text NOT NULL,
 	"status" text DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"expires_at" timestamp NOT NULL,
@@ -69,49 +69,49 @@ CREATE TABLE "invitations" (
 );
 --> statement-breakpoint
 CREATE TABLE "organizations" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "project_roles" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"project_id" uuid NOT NULL,
+	"project_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "projects" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"organization_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "roles" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"organization_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
-	"sessionToken" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"userId" uuid NOT NULL,
+	"sessionToken" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
 	"expires" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "tasks" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"description" text,
-	"project_id" uuid NOT NULL,
-	"column_id" uuid NOT NULL,
-	"assignee_id" uuid,
+	"project_id" text NOT NULL,
+	"column_id" text NOT NULL,
+	"assignee_id" text,
 	"priority" text DEFAULT 'medium' NOT NULL,
 	"due_date" timestamp,
 	"order" integer NOT NULL,
@@ -120,16 +120,16 @@ CREATE TABLE "tasks" (
 );
 --> statement-breakpoint
 CREATE TABLE "time_tracking" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
-	"task_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"task_id" text NOT NULL,
 	"start_time" timestamp NOT NULL,
 	"end_time" timestamp,
 	"status" text DEFAULT 'in_progress'
 );
 --> statement-breakpoint
 CREATE TABLE "user" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text,
 	"email" text,
 	"emailVerified" timestamp,
@@ -138,17 +138,17 @@ CREATE TABLE "user" (
 );
 --> statement-breakpoint
 CREATE TABLE "users_to_organizations" (
-	"user_id" uuid NOT NULL,
-	"organization_id" uuid NOT NULL,
-	"role_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
+	"organization_id" text NOT NULL,
+	"role_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "users_to_organizations_user_id_organization_id_pk" PRIMARY KEY("user_id","organization_id")
 );
 --> statement-breakpoint
 CREATE TABLE "users_to_projects" (
-	"user_id" uuid NOT NULL,
-	"project_id" uuid NOT NULL,
-	"role_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
+	"project_id" text NOT NULL,
+	"role_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "users_to_projects_user_id_project_id_pk" PRIMARY KEY("user_id","project_id")
 );

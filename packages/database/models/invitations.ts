@@ -4,10 +4,12 @@ import { relations } from 'drizzle-orm';
 
 // Таблица приглашений
 export const invitations = pgTable('invitations', {
-    id: uuid('id').defaultRandom().primaryKey(),
+    id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
     email: text('email').notNull(),
     token: text('token').notNull().unique(),
-    organizationId: uuid('organization_id')
+    organizationId: text('organization_id')
         .notNull()
         .references(() => organizations.id, { onDelete: 'cascade' }),
     status: text('status').notNull().default('pending'), // Статус приглашения (например, "pending", "accepted", "expired")
@@ -15,10 +17,3 @@ export const invitations = pgTable('invitations', {
     expiresAt: timestamp('expires_at').notNull(), // Срок действия приглашения
 });
 
-// Отношения для приглашений
-export const invitationsRelations = relations(invitations, ({ one }) => ({
-    organization: one(organizations, {
-        fields: [invitations.organizationId],
-        references: [organizations.id],
-    }),
-}));

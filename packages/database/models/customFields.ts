@@ -5,7 +5,9 @@ import { projectRoles } from './roles';
 
 // Таблица доступных полей
 export const availableFields = pgTable('available_fields', {
-    id: uuid('id').defaultRandom().primaryKey(),
+    id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
     entityType: text('entity_type').notNull(), // Тип сущности (например, "task", "user_project")
     fieldName: text('field_name').notNull(), // Название поля (например, "Оценка сложности")
     fieldType: text('field_type').notNull(), // Тип поля (например, "string", "number", "boolean", "date")
@@ -17,11 +19,13 @@ export const availableFields = pgTable('available_fields', {
 
 // Таблица значений полей
 export const fieldValues = pgTable('field_values', {
-    id: uuid('id').defaultRandom().primaryKey(),
-    fieldId: uuid('field_id')
+    id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+    fieldId: text('field_id')
         .notNull()
         .references(() => availableFields.id, { onDelete: 'cascade' }), // Ссылка на доступное поле
-    entityId: uuid('entity_id').notNull(), // ID сущности (например, ID задачи или ID пользователя в проекте)
+    entityId: text('entity_id').notNull(), // ID сущности (например, ID задачи или ID пользователя в проекте)
     value: text('value').notNull(), // Значение поля (в виде строки, JSON или другого формата)
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -31,10 +35,10 @@ export const fieldValues = pgTable('field_values', {
 export const fieldPermissions = pgTable(
     'field_permissions',
     {
-        fieldId: uuid('field_id')
+        fieldId: text('field_id')
             .notNull()
             .references(() => availableFields.id, { onDelete: 'cascade' }), // Ссылка на доступное поле
-        roleId: uuid('role_id')
+        roleId: text('role_id')
             .notNull()
             .references(() => roles.id, { onDelete: 'cascade' }), // Ссылка на роль
         canView: boolean('can_view').notNull().default(false), // Может ли роль просматривать поле
@@ -47,29 +51,3 @@ export const fieldPermissions = pgTable(
         }),
     }),
 );
-
-// Отношения для доступных полей
-export const availableFieldsRelations = relations(availableFields, ({ many }) => ({
-    values: many(fieldValues),
-    permissions: many(fieldPermissions),
-}));
-
-// Отношения для значений полей
-export const fieldValuesRelations = relations(fieldValues, ({ one }) => ({
-    field: one(availableFields, {
-        fields: [fieldValues.fieldId],
-        references: [availableFields.id],
-    }),
-}));
-
-// Отношения для прав доступа к полям
-export const fieldPermissionsRelations = relations(fieldPermissions, ({ one }) => ({
-    field: one(availableFields, {
-        fields: [fieldPermissions.fieldId],
-        references: [availableFields.id],
-    }),
-    role: one(roles, {
-        fields: [fieldPermissions.roleId],
-        references: [roles.id],
-    }),
-}));

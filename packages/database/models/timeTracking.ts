@@ -5,11 +5,13 @@ import { tasks } from './tasks';
 
 // Таблица для учета времени
 export const timeTracking = pgTable('time_tracking', {
-    id: uuid('id').defaultRandom().primaryKey(),
-    userId: uuid('user_id')
+    id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+    userId: text('user_id')
         .notNull()
         .references(() => users.id, { onDelete: 'cascade' }), // Пользователь, который учитывает время
-    taskId: uuid('task_id')
+    taskId: text('task_id')
         .notNull()
         .references(() => tasks.id, { onDelete: 'cascade' }), // Задача, на которую учитывается время
     startTime: timestamp('start_time').notNull(), // Время начала работы
@@ -17,14 +19,3 @@ export const timeTracking = pgTable('time_tracking', {
     status: text('status').default('in_progress'), // Статус задачи (например, "in_progress", "completed")
 });
 
-// Отношения для учета времени
-export const timeTrackingRelations = relations(timeTracking, ({ one }) => ({
-    user: one(users, {
-        fields: [timeTracking.userId],
-        references: [users.id],
-    }),
-    task: one(tasks, {
-        fields: [timeTracking.taskId],
-        references: [tasks.id],
-    }),
-}));

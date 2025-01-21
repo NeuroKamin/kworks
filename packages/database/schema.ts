@@ -1,12 +1,29 @@
-import { users, accounts, sessions, verificationTokens, usersToOrganizations, usersToProjects, usersRelations, accountsRelations, sessionsRelations } from './models/users';
-import { organizations, organizationsRelations } from './models/organizations';
-import { projects, projectsRelations } from './models/projects';
-import { roles, projectRoles, rolesRelations, projectRolesRelations } from './models/roles';
+import { users, accounts, sessions, verificationTokens, usersToOrganizations, usersToProjects } from './models/users';
+import { organizations } from './models/organizations';
+import { projects } from './models/projects';
+import { roles, projectRoles } from './models/roles';
 import { tasks } from './models/tasks';
 import { availableFields, fieldValues, fieldPermissions } from './models/customFields';
 import { boards, columns } from './models/boards';
 import { invitations } from './models/invitations';
-import { timeTracking, timeTrackingRelations } from './models/timeTracking';
+import { timeTracking } from './models/timeTracking';
+import {
+  usersRelations,
+  organizationsRelations,
+  projectsRelations,
+  tasksRelations,
+  boardsRelations,
+  columnsRelations,
+  rolesRelations,
+  projectRolesRelations,
+  timeTrackingRelations,
+  usersToOrganizationsRelations,
+  usersToProjectsRelations,
+  invitationsRelations,
+  availableFieldsRelations, 
+    fieldValuesRelations, 
+    fieldPermissionsRelations 
+} from './models/relations';
 
 export {
     users,
@@ -15,17 +32,10 @@ export {
     verificationTokens,
     usersToOrganizations,
     usersToProjects,
-    usersRelations,
-    accountsRelations,
-    sessionsRelations,
     organizations,
-    organizationsRelations,
     projects,
-    projectsRelations,
     roles,
     projectRoles,
-    rolesRelations,
-    projectRolesRelations,
     tasks,
     availableFields,
     fieldValues,
@@ -34,5 +44,19 @@ export {
     columns,
     invitations,
     timeTracking,
+    usersRelations,
+    organizationsRelations,
+    projectsRelations,
+    tasksRelations,
+    boardsRelations,
+    columnsRelations,
+    rolesRelations,
+    projectRolesRelations,
     timeTrackingRelations,
+    usersToOrganizationsRelations,
+    usersToProjectsRelations,
+    invitationsRelations,
+    availableFieldsRelations, 
+    fieldValuesRelations, 
+    fieldPermissionsRelations 
 };
