@@ -3,8 +3,6 @@ import { sendVerificationEmail } from "@workspace/mailer";
 import { SubmitButton } from "@workspace/ui/components/form/submit-button";
 
 const LoginPage = () => {
-  console.log("LoginPage");
-
   return (
     <div className="w-full max-w-sm">
       <form

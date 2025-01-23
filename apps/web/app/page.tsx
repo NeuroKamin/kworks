@@ -1,7 +1,8 @@
+import { getWeek } from "@workspace/ui/lib/utils";
+
+import { getEvents } from "../actions/events";
 
 import Scheduler from "@/components/Scheduler";
-import { getEvents } from "../actions/events";
-import { getWeek } from "@workspace/ui/lib/utils";
 
 export default async function Page() {
   const { startOfWeek, endOfWeek } = getWeek();
@@ -10,5 +11,5 @@ export default async function Page() {
     <div className="flex mx-auto">
       <Scheduler events={events} />
     </div>
-  )
+  );
 }
