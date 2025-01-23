@@ -1,0 +1,23 @@
+{
+  "name": "@workspace/mailer",
+  "version": "1.0.0",
+  "exports": {
+    ".": "./index.tsx"
+  },
+  "scripts": {
+    "dev": "email dev --port=3002"
+  },
+  "dependencies": {
+    "@react-email/components": "0.0.32",
+    "@react-email/render": "^0.0.12",
+    "@types/node": "^20.12.12",
+    "@types/nodemailer": "^6.4.15",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "nodemailer": "^6.9.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-email": "3.0.6",
+    "typescript": "^5.4.5"
+  }
+}
