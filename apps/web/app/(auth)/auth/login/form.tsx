@@ -112,6 +112,7 @@ export const LoginForm = () => {
                   }}
                 >
                   <SubmitButton>Продолжить</SubmitButton>
+                  <button className="w-full">Продолжить</button>
                 </motion.div>
               </div>
             </motion.div>
