@@ -2,15 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getWeek } from "@workspace/ui/lib/utils.js";
+import { getWeek } from "@workspace/ui/lib/utils";
 
-import { Button } from "../button.js";
+import { Button } from "../button";
 
-import DayColumn from "./day-column.js";
-import TimeColumn from "./time-column.js";
-import EventCard, { SchedulerEvent } from "./event-card.js";
-import { SchedulerProvider, useScheduler } from "./SchedulerContext.js";
-import { minutesPerGrid } from "./constants.js";
+import DayColumn from "./day-column";
+import TimeColumn from "./time-column";
+import EventCard, { SchedulerEvent } from "./event-card";
+import { SchedulerProvider, useScheduler } from "./SchedulerContext";
+import { minutesPerGrid } from "./constants";
 
 interface SchedulerProps {
   events: SchedulerEvent[];

@@ -3,7 +3,9 @@
 import { db } from "@workspace/database";
 import { verificationTokens } from "@workspace/database/schema";
 import { sendVerificationEmail } from "@workspace/mailer";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+
+import { signIn as nextAuthSignIn } from "@/auth";
 
 /**
  * Генерирует и отправляет 6-значный PIN-код на указанный email.
@@ -27,26 +29,32 @@ export const sendPin = async (email: string) => {
   await sendVerificationEmail(email, pin);
 };
 
-/**
- * Проверяет правильность PIN-кода для указанного email.
- * При успешной проверке удаляет использованный токен.
- * @param email - Email адрес для проверки
- * @param pin - PIN-код для проверки
- * @returns {Promise<boolean>} - true если PIN верный, false если нет
- */
-export const verifyPin = async (email: string, pin: string) => {
-  const token = await db.query.verificationTokens.findFirst({
-    where: and(
-      eq(verificationTokens.identifier, email),
-      eq(verificationTokens.token, pin),
-    ),
-  });
+type SignInOptions = {
+  email: string;
+  pin: string;
+  redirect?: boolean | undefined;
+};
 
-  if (token) {
-    await db
-      .delete(verificationTokens)
-      .where(eq(verificationTokens.identifier, email));
+export const signIn = async ({
+  email,
+  pin,
+  redirect = false,
+}: SignInOptions) => {
+  try {
+    const result = await nextAuthSignIn("credentials", {
+      email,
+      pin,
+      redirect,
+    });
+
+    return {
+      error: result?.error,
+      ok: !result?.error,
+    };
+  } catch (error) {
+    return {
+      error: "Произошла ошибка при входе",
+      ok: false,
+    };
   }
-
-  return token !== null;
 };

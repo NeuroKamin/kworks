@@ -1,6 +1,6 @@
 "use client";
 
-import { useScheduler } from "./SchedulerContext.js";
+import { useScheduler } from "./SchedulerContext";
 
 const TimeColumn = () => {
   const { hoursFrom, hoursTo } = useScheduler();

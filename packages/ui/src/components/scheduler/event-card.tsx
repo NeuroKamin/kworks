@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
-import { cn } from "@workspace/ui/lib/utils.js";
+import { cn } from "@workspace/ui/lib/utils";
 
-import { useScheduler } from "./SchedulerContext.js";
-import { gridSize, minutesPerGrid } from "./constants.js";
+import { useScheduler } from "./SchedulerContext";
+import { gridSize, minutesPerGrid } from "./constants";
 
 export type SchedulerEvent = {
   id: string;

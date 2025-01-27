@@ -1,9 +1,9 @@
 "use client";
 
-import { cn } from "@workspace/ui/lib/utils.js";
+import { cn } from "@workspace/ui/lib/utils";
 
-import HourCell from "./hour-cell.js";
-import { useScheduler } from "./SchedulerContext.js";
+import HourCell from "./hour-cell";
+import { useScheduler } from "./SchedulerContext";
 
 const DayColumn = ({
   date,

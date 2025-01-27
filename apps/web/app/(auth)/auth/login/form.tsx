@@ -4,15 +4,15 @@ import { Input } from "@workspace/ui/components/input";
 import { SubmitButton } from "@workspace/ui/components/form/submit-button";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { GalleryVerticalEnd } from "lucide-react";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
 } from "@workspace/ui/components/input-otp";
+import { useRouter } from "next/navigation";
 
-import { sendPin } from "@/actions/auth";
+import { sendPin, signIn } from "@/actions/auth";
 
 const duration = 0.3;
 const delay = 0.1;
@@ -21,12 +21,38 @@ const bounce = { type: "spring", bounce: 0.3 };
 export const LoginForm = () => {
   const [show, setShow] = useState(false);
   const [showPin, setShowPin] = useState(false);
+  const [mail, setMail] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const onSubmit = async (e: FormData) => {
     const email = e.get("email") as string;
+    setMail(email);
     await sendPin(email);
-    setShowPin(true);
     setShow(false);
+    setTimeout(() => {
+      setShowPin(true);
+    }, 500);
+  };
+
+  const onPinComplete = async (value: string) => {
+    try {
+      const result = await signIn({
+        email: mail,
+        pin: value,
+        redirect: false,
+      });
+
+      if (result.error) {
+        setError("Неверный код подтверждения");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      setError("Произошла ошибка при входе");
+    }
   };
 
   useEffect(() => {
@@ -36,24 +62,14 @@ export const LoginForm = () => {
   }, []);
 
   return (
-    <form action={onSubmit}>
-      <div className="flex flex-col gap-3">
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 0.4,
-            scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-          }}
-        >
-          <GalleryVerticalEnd className="mx-auto size-14 p-3 bg-gradient-to-b from-primary to-primary/70 text-primary-foreground rounded-xl" />
-        </motion.div>
+    <form action={onSubmit} className="w-full max-w-sm mx-auto">
+      <div className="flex flex-col gap-6">
         <AnimatePresence>
           {show && (
             <motion.div
               initial={{ height: 0 }}
               animate={{ height: "auto" }}
-              exit={{ height: 0 }}
+              exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, height: bounce }}
               className="flex flex-col gap-6"
             >
@@ -62,6 +78,7 @@ export const LoginForm = () => {
                   className="text-xl text-center font-bold"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
                   transition={{
                     duration,
                     y: bounce,
@@ -73,13 +90,14 @@ export const LoginForm = () => {
                   className="text-center text-sm text-muted-foreground"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
                   transition={{
                     duration,
                     delay,
                     y: bounce,
                   }}
                 >
-                  Введите ваш email для входа в систему
+                  Введите email для входа в систему
                 </motion.div>
               </div>
 
@@ -87,6 +105,7 @@ export const LoginForm = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
                   transition={{
                     duration,
                     delay: delay * 2,
@@ -94,10 +113,10 @@ export const LoginForm = () => {
                   }}
                 >
                   <Input
-                    id="email"
                     type="email"
                     name="email"
-                    placeholder="m@example.com"
+                    placeholder="Email"
+                    autoComplete="email"
                     required
                   />
                 </motion.div>
@@ -105,6 +124,7 @@ export const LoginForm = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
                   transition={{
                     duration,
                     delay: delay * 3,
@@ -112,7 +132,6 @@ export const LoginForm = () => {
                   }}
                 >
                   <SubmitButton>Продолжить</SubmitButton>
-                  <button className="w-full">Продолжить</button>
                 </motion.div>
               </div>
             </motion.div>
@@ -121,20 +140,79 @@ export const LoginForm = () => {
 
         <AnimatePresence>
           {showPin && (
-            <motion.div>
-              <InputOTP maxLength={6}>
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                </InputOTPGroup>
-                <InputOTPSeparator />
-                <InputOTPGroup>
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, height: bounce }}
+              className="flex flex-col gap-6 items-center"
+            >
+              <div className="flex flex-col gap-1">
+                <motion.h1
+                  className="text-xl text-center font-bold"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{
+                    delay: delay * 2,
+                    duration,
+                    y: bounce,
+                  }}
+                >
+                  Введите код из письма
+                </motion.h1>
+                <motion.div
+                  className="text-center text-sm text-muted-foreground"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{
+                    duration,
+                    delay: delay * 3,
+                    y: bounce,
+                  }}
+                >
+                  {mail}
+                </motion.div>
+                {error && (
+                  <motion.div
+                    className="text-center text-sm text-destructive"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration,
+                      delay: delay * 3,
+                      y: bounce,
+                    }}
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{
+                  duration,
+                  delay: delay * 3,
+                  y: bounce,
+                }}
+              >
+                <InputOTP maxLength={6} onComplete={onPinComplete}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
