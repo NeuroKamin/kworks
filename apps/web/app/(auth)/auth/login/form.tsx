@@ -11,6 +11,7 @@ import {
   InputOTPSlot,
 } from "@workspace/ui/components/input-otp";
 import { useRouter } from "next/navigation";
+import { GalleryVerticalEnd } from "lucide-react";
 
 import { sendPin, signIn } from "@/actions/auth";
 
@@ -24,7 +25,7 @@ export const LoginForm = () => {
   const [mail, setMail] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-
+  const [isLoading, setIsLoading] = useState(false);
   const onSubmit = async (e: FormData) => {
     const email = e.get("email") as string;
     setMail(email);
@@ -36,6 +37,7 @@ export const LoginForm = () => {
   };
 
   const onPinComplete = async (value: string) => {
+    setIsLoading(true);
     try {
       const result = await signIn({
         email: mail,
@@ -52,6 +54,8 @@ export const LoginForm = () => {
       router.refresh();
     } catch (error) {
       setError("Произошла ошибка при входе");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,6 +68,16 @@ export const LoginForm = () => {
   return (
     <form action={onSubmit} className="w-full max-w-sm mx-auto">
       <div className="flex flex-col gap-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.4,
+            scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+          }}
+        >
+          <GalleryVerticalEnd className="mx-auto size-14 p-3 bg-gradient-to-b from-primary to-primary/70 text-primary-foreground rounded-xl" />
+        </motion.div>
         <AnimatePresence>
           {show && (
             <motion.div
@@ -199,7 +213,11 @@ export const LoginForm = () => {
                   y: bounce,
                 }}
               >
-                <InputOTP maxLength={6} onComplete={onPinComplete}>
+                <InputOTP
+                  maxLength={6}
+                  onComplete={onPinComplete}
+                  disabled={isLoading}
+                >
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />
                     <InputOTPSlot index={1} />

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { cn } from "@workspace/ui/lib/utils";
+import { colors, hoverColors } from "@workspace/ui/colors";
 
 import { useScheduler } from "./SchedulerContext";
 import { gridSize, minutesPerGrid } from "./constants";
@@ -245,9 +246,9 @@ const EventCard = ({
         "event-card",
         "text-xs group flex flex-col justify-between absolute top-0 left-0",
         "rounded-sm p-3 select-none transition-colors overflow-hidden",
-        "hover:shadow-xl z-20 pointer-events-auto",
-        `bg-${event.color}-500/60`,
-        `hover:bg-${event.color}-500/80`,
+        "hover:shadow-md z-20 pointer-events-auto",
+        colors[event.color as keyof typeof colors],
+        hoverColors[event.color as keyof typeof hoverColors],
         isDragging ? "cursor-grabbing" : "cursor-grab",
       )}
       style={{

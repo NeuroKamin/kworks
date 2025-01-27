@@ -11,9 +11,9 @@ export default async function Page() {
   const session = await auth();
 
   const events = await getEvents(startOfWeek, endOfWeek);
+  console.log(events);
   return (
     <div className="flex mx-auto">
-      {session?.user?.email}
       <Scheduler events={events} />
     </div>
   );

@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getWeek } from "@workspace/ui/lib/utils";
+import { cn, getWeek } from "@workspace/ui/lib/utils";
+import { colors } from "@workspace/ui/colors";
 
 import { Button } from "../button";
 
@@ -131,6 +132,7 @@ const SchedulerContent = ({
   return (
     <div className="w-full">
       <div className="flex items-center justify-end px-4 gap-4">
+        
         <div className="text-sm text-muted-foreground">
           {`${startOfWeek.toLocaleDateString("ru-RU", { month: "long" })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
         </div>
