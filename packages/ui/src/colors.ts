@@ -1,6 +1,6 @@
 export const colors = {
   red: "bg-red-500/60",
-  slate: "bg-slate-500/60",
+  slate: "bg-slate-400/60",
   green: "bg-green-500/60",
   blue: "bg-blue-500/60",
   yellow: "bg-yellow-500/60",
@@ -20,7 +20,7 @@ export const colors = {
 
 export const hoverColors = {
   red: "hover:bg-red-500/80",
-  slate: "hover:bg-slate-500/80",
+  slate: "hover:bg-slate-400/80",
   green: "hover:bg-green-500/80",
   blue: "hover:bg-blue-500/80",
   yellow: "hover:bg-yellow-500/80",

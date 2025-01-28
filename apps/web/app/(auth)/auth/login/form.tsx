@@ -26,11 +26,17 @@ export const LoginForm = () => {
   const [error, setError] = useState("");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailExist, setIsEmailExist] = useState(false);
+
+  const [name, setName] = useState("");
+
   const onSubmit = async (e: FormData) => {
     const email = e.get("email") as string;
     setMail(email);
-    await sendPin(email);
+    const exist = await sendPin(email);
+    setIsEmailExist(exist);
     setShow(false);
+
     setTimeout(() => {
       setShowPin(true);
     }, 500);
@@ -42,6 +48,7 @@ export const LoginForm = () => {
       const result = await signIn({
         email: mail,
         pin: value,
+        name,
         redirect: false,
       });
 
@@ -173,7 +180,7 @@ export const LoginForm = () => {
                     y: bounce,
                   }}
                 >
-                  Введите код из письма
+                  Еще немного
                 </motion.h1>
                 <motion.div
                   className="text-center text-sm text-muted-foreground"
@@ -186,7 +193,9 @@ export const LoginForm = () => {
                     y: bounce,
                   }}
                 >
-                  {mail}
+                  {isEmailExist
+                    ? "Введите код из письма"
+                    : "Введите свое имя и код из письма"}
                 </motion.div>
                 {error && (
                   <motion.div
@@ -203,6 +212,30 @@ export const LoginForm = () => {
                   </motion.div>
                 )}
               </div>
+              {!isEmailExist && (
+                <motion.div
+                  className="w-full"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration,
+                    delay: delay * 3,
+                    y: bounce,
+                  }}
+                >
+                  <Input
+                    type="text"
+                    name="name"
+                    placeholder="Фамилия Имя"
+                    className="w-full"
+                    autoComplete="off"
+                    required
+                    value={name}
+                    disabled={isLoading}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </motion.div>
+              )}
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -216,7 +249,7 @@ export const LoginForm = () => {
                 <InputOTP
                   maxLength={6}
                   onComplete={onPinComplete}
-                  disabled={isLoading}
+                  disabled={isLoading || (!name && !isEmailExist)}
                 >
                   <InputOTPGroup>
                     <InputOTPSlot index={0} />

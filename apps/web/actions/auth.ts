@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@workspace/database";
-import { verificationTokens } from "@workspace/database/schema";
+import { users, verificationTokens } from "@workspace/database/schema";
 import { sendVerificationEmail } from "@workspace/mailer";
 import { eq } from "drizzle-orm";
 
@@ -27,23 +27,46 @@ export const sendPin = async (email: string) => {
   });
 
   await sendVerificationEmail(email, pin);
+
+  return emailExist(email);
 };
 
+/**
+ * Проверяет существование пользователя с указанным email в базе данных
+ * @param email - Email адрес для проверки
+ * @returns true если пользователь существует, false в противном случае
+ */
+export const emailExist = async (email: string) => {
+  const user = await db.select().from(users).where(eq(users.email, email));
+  return user.length > 0;
+};
+
+/**
+ * Тип параметров для функции входа
+ */
 type SignInOptions = {
   email: string;
   pin: string;
+  name?: string | undefined;
   redirect?: boolean | undefined;
 };
 
+/**
+ * Выполняет вход пользователя с использованием email и PIN-кода
+ * @param options - Параметры для входа (email, pin, redirect)
+ * @returns Объект с результатом входа: {error?: string, ok: boolean}
+ */
 export const signIn = async ({
   email,
   pin,
+  name,
   redirect = false,
 }: SignInOptions) => {
   try {
     const result = await nextAuthSignIn("credentials", {
       email,
       pin,
+      name,
       redirect,
     });
 

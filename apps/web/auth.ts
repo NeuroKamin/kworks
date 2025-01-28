@@ -19,6 +19,7 @@ const credentialsSchema = z.object({
     .string()
     .length(6, "PIN-код должен состоять из 6 цифр")
     .regex(/^\d+$/, "PIN-код должен содержать только цифры"),
+  name: z.string().optional(),
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -35,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         pin: { label: "PIN", type: "text" },
+        name: { label: "Имя", type: "text" },
       },
       async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.pin) {
@@ -45,6 +47,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const validatedData = credentialsSchema.parse({
             email: credentials.email,
             pin: credentials.pin,
+            name: credentials.name,
           });
 
           // Сначала проверяем код верификации
@@ -97,6 +100,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               .values({
                 email: validatedData.email,
                 emailVerified: new Date(),
+                name: validatedData.name,
               })
               .returning();
             user = newUser;
