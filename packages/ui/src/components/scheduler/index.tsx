@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn, getWeek } from "@workspace/ui/lib/utils";
-import { colors } from "@workspace/ui/colors";
+import { getWeek } from "@workspace/ui/lib/utils";
 
 import { Button } from "../button";
+import { SidebarTrigger, useSidebar } from "../sidebar";
 
 import DayColumn from "./day-column";
 import TimeColumn from "./time-column";
@@ -34,17 +34,29 @@ const SchedulerContent = ({
     null,
   );
   const [initialY, setInitialY] = useState(0);
-  const { columnWidth } = useScheduler();
+
+  const { state } = useSidebar();
+
+  const updateColumnWidth = () => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const timeColumnWidth = 60; // Ширина колонки времени
+      const availableWidth = containerWidth - timeColumnWidth;
+      const newColumnWidth = Math.max(
+        Math.min(Math.floor(availableWidth / 7), 200),
+        100,
+      ); // Минимум 100px, максимум 200px
+      setColumnWidth(newColumnWidth);
+    }
+  };
 
   useEffect(() => {
-    const updateColumnWidth = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth;
-        const newColumnWidth = Math.floor(containerWidth / 7);
-        setColumnWidth(newColumnWidth);
-      }
-    };
+    setTimeout(() => {
+      updateColumnWidth();
+    }, 300);
+  }, [state]);
 
+  useEffect(() => {
     updateColumnWidth();
     window.addEventListener("resize", updateColumnWidth);
     return () => window.removeEventListener("resize", updateColumnWidth);
@@ -131,40 +143,45 @@ const SchedulerContent = ({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-end px-4 gap-4">
-        
-        <div className="text-sm text-muted-foreground">
-          {`${startOfWeek.toLocaleDateString("ru-RU", { month: "long" })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
-        </div>
-        <div className="flex items-center gap-0 w-fit rounded-md">
-          <Button
-            onClick={prevWeek}
-            size={"sm"}
-            variant={"ghost"}
-            className="rounded-r-none"
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            size={"sm"}
-            variant={"ghost"}
-            onClick={todayWeek}
-            className="rounded-none"
-          >
-            Сегодня
-          </Button>
-          <Button
-            onClick={nextWeek}
-            size={"sm"}
-            variant={"ghost"}
-            className="rounded-l-none"
-          >
-            <ChevronRight />
-          </Button>
+      <div className="flex items-center justify-between px-4 gap-4">
+        <SidebarTrigger />
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-muted-foreground">
+            {`${startOfWeek.toLocaleDateString("ru-RU", { month: "long" })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}
+          </div>
+          <div className="flex items-center gap-0 w-fit rounded-md">
+            <Button
+              onClick={prevWeek}
+              size={"sm"}
+              variant={"ghost"}
+              className="rounded-r-none"
+            >
+              <ChevronLeft />
+            </Button>
+            <Button
+              size={"sm"}
+              variant={"ghost"}
+              onClick={todayWeek}
+              className="rounded-none"
+            >
+              Сегодня
+            </Button>
+            <Button
+              onClick={nextWeek}
+              size={"sm"}
+              variant={"ghost"}
+              className="rounded-l-none"
+            >
+              <ChevronRight />
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div ref={containerRef} className="flex w-full h-full relative">
+      <div
+        ref={containerRef}
+        className="flex w-full h-full relative overflow-x-auto"
+      >
         <TimeColumn />
         <div className="flex-1 flex relative">
           <div className="absolute inset-0 flex">
@@ -220,7 +237,7 @@ const Scheduler = ({
   onWeekChange,
 }: SchedulerProps) => {
   return (
-    <SchedulerProvider hoursFrom={7} hoursTo={20}>
+    <SchedulerProvider hoursFrom={7} hoursTo={22}>
       <SchedulerContent
         events={events}
         onUpdateEvent={onUpdateEvent}

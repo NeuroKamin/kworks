@@ -12,9 +12,5 @@ export default async function Page() {
 
   const events = await getEvents(startOfWeek, endOfWeek);
   console.log(events);
-  return (
-    <div className="flex mx-auto">
-      <Scheduler events={events} />
-    </div>
-  );
+  return <Scheduler events={events} />;
 }
