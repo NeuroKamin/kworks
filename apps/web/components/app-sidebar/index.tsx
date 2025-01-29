@@ -1,14 +1,18 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
 } from "@workspace/ui/components/sidebar";
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+
+import { NavUser } from "./nav-user";
+import { NavOrganisations } from "./nav-organisations";
+
+import { getSelectedOrganization } from "@/actions/organizations";
+import { getUserOrganizations } from "@/actions/organizations";
+import { auth } from "@/auth";
 
 const items = [
   {
@@ -39,16 +43,33 @@ const items = [
 ];
 
 export async function AppSidebar() {
+  const session = await auth();
+
+  if (!session?.user) {
+    return null;
+  }
+
+  const [organizations, selectedOrganization] = await Promise.all([
+    getUserOrganizations(session.user.id!),
+    getSelectedOrganization(session.user.id!),
+  ]);
+
   return (
-    <Sidebar collapsible="offcanvas" className="z-50">
+    <Sidebar collapsible="icon" className="z-50">
+      <SidebarHeader>
+        <NavOrganisations
+          organizations={organizations}
+          selectedOrganization={selectedOrganization?.id ?? ""}
+        />
+      </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
+        {/* <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title}>
                     <a href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -58,8 +79,12 @@ export async function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

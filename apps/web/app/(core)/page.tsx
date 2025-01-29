@@ -1,7 +1,6 @@
 import { getWeek } from "@workspace/ui/lib/utils";
 
-import { getEvents } from "../actions/events";
-
+import { getEvents } from "@/actions/events";
 import Scheduler from "@/components/Scheduler";
 import { auth } from "@/auth";
 

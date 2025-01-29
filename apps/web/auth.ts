@@ -12,6 +12,7 @@ import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
 import { authConfig } from "./auth.config";
+import { createOrganization } from "./actions/organizations";
 
 const credentialsSchema = z.object({
   email: z.string().email("Неверный формат email"),
@@ -95,6 +96,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           // Если пользователя нет, создаем его
           if (!user) {
+            // Создаем пользователя
             const [newUser] = await db
               .insert(users)
               .values({
@@ -103,7 +105,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 name: validatedData.name,
               })
               .returning();
-            user = newUser;
+
+            // Создаем организацию и связываем с пользователем
+            const { organization } = await createOrganization({
+              name: validatedData.name || "Неизвестный пользователь",
+              description: "Личная организация",
+              userId: newUser.id,
+              setAsCurrent: true,
+            });
+
+            user = {
+              ...newUser,
+              selectedOrganizationId: organization.id,
+            };
           }
 
           return {

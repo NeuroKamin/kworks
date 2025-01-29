@@ -19,9 +19,10 @@ export const users = pgTable("user", {
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
+  selectedOrganizationId: text("selected_organization_id").references(() => organizations.id, { onDelete: "set null" }),
   image: text("image"),
 })
- 
+
 export const accounts = pgTable(
   "account",
   {

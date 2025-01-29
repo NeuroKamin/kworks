@@ -20,7 +20,11 @@ import {
 import { invitations } from './invitations';
 
 // Отношения для пользователей
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
+  selectedOrganization: one(organizations, {
+    fields: [users.selectedOrganizationId],
+    references: [organizations.id],
+  }),
   organizations: many(usersToOrganizations),
   projects: many(usersToProjects),
   assignedTasks: many(tasks),
