@@ -46,7 +46,7 @@ export function NavOrganisations({
                 <span className="truncate font-semibold">
                   {activeOrganization?.name}
                 </span>
-                <span className="truncate text-xs">
+                <span className="truncate text-xs text-muted-foreground">
                   {activeOrganization?.description ?? "Организация"}
                 </span>
               </div>
@@ -58,16 +58,23 @@ export function NavOrganisations({
             align="center"
             side="bottom"
           >
-            {organizations.map((organization, index) => (
+            {organizations.map((organization) => (
               <DropdownMenuItem
                 key={organization.id}
                 onClick={() => setActiveOrganization(organization)}
-                className="gap-2 p-2"
+                className="gap-2 p-2 group items-center"
               >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <GalleryVerticalEnd className="size-4" />
+                <div className="flex size-6 items-center justify-center rounded-md border bg-sidebar-primary text-sidebar-primary-foreground">
+                  <GalleryVerticalEnd className="size-3" />
                 </div>
-                {organization.name}
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    {activeOrganization?.name}
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {activeOrganization?.description ?? "Организация"}
+                  </span>
+                </div>
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />

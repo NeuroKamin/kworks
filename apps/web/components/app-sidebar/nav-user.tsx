@@ -17,7 +17,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar";
-import { BadgeCheck, Bell, ChevronsUpDown, User } from "lucide-react";
+import { BadgeCheck, Bell, ChevronsUpDown } from "lucide-react";
+import { IconUserFilled } from "@tabler/icons-react";
 
 import { SignOut } from "./sign-out";
 
@@ -40,8 +41,8 @@ export async function NavUser() {
             >
               <Avatar className="size-8 rounded-lg shrink-0">
                 <AvatarImage src={user.image!} alt={user.name!} />
-                <AvatarFallback className="rounded-lg bg-primary text-primary-foreground p-1">
-                  <User />
+                <AvatarFallback className="rounded-lg bg-primary text-primary-foreground p-2">
+                  <IconUserFilled />
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col justify-center text-left text-sm leading-tight w-full">
@@ -61,8 +62,8 @@ export async function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg shrink-0">
                   <AvatarImage src={user.image!} alt={user.name!} />
-                  <AvatarFallback className="rounded-lg bg-primary text-primary-foreground p-1">
-                    <User />
+                  <AvatarFallback className="rounded-lg bg-primary text-primary-foreground p-2">
+                    <IconUserFilled />
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col justify-center text-left text-sm leading-tight w-full">
