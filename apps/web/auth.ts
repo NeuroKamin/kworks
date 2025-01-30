@@ -108,8 +108,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             // Создаем организацию и связываем с пользователем
             const { organization } = await createOrganization({
-              name: validatedData.name || "Неизвестный пользователь",
-              description: "Личная организация",
+              name: "Моя организация",
+              description: "Владелец " + validatedData.name,
               userId: newUser.id,
               setAsCurrent: true,
             });

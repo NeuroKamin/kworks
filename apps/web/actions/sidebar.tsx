@@ -5,6 +5,7 @@ import {
   IconFolderFilled,
   IconLayoutKanbanFilled,
   IconLayoutListFilled,
+  IconLockFilled,
   IconPlus,
   IconSettingsFilled,
   IconUserFilled,
@@ -70,6 +71,11 @@ export async function getSidebarItems() {
           title: "Пользователи",
           url: "/organization/users",
           icon: IconUserFilled,
+        },
+        {
+          title: "Роли",
+          url: "/organization/roles",
+          icon: IconLockFilled,
         },
         {
           title: "Настройки",
