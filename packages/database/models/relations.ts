@@ -113,6 +113,10 @@ export const timeTrackingRelations = relations(timeTracking, ({ one }) => ({
   task: one(tasks, {
     fields: [timeTracking.taskId],
     references: [tasks.id]
+  }),
+  organization: one(organizations, {
+    fields: [timeTracking.organizationId],
+    references: [organizations.id]
   })
 }));
 
