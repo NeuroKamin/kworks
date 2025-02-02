@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, GalleryVerticalEnd } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,20 +14,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar";
+import { TOrganisation } from "@workspace/database/types";
+
+import { OrganisationIcon } from "@/components/organisation-icon";
+import { useOrganisation } from "@/store/organistaion";
 
 export function NavOrganisations({
-  organizations,
-  selectedOrganization,
+  organisations,
 }: {
-  organizations: {
-    id: string;
-    name: string;
-    description: string | null;
-  }[];
-  selectedOrganization: string;
+  organisations: TOrganisation[];
 }) {
-  const [activeOrganization, setActiveOrganization] = React.useState(
-    organizations.find((org) => org.id === selectedOrganization),
+  const { currentOrganisation, setOrganisation } = useOrganisation();
+
+  const filteredOrganisations = organisations.filter(
+    (organisation) => organisation.id !== currentOrganisation.id,
   );
 
   return (
@@ -39,15 +39,13 @@ export function NavOrganisations({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <GalleryVerticalEnd className="size-4" />
-              </div>
+              <OrganisationIcon />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeOrganization?.name}
+                  {currentOrganisation?.name}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {activeOrganization?.description ?? "Организация"}
+                  {currentOrganisation?.description || "Без описания"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -55,32 +53,40 @@ export function NavOrganisations({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            align="center"
+            align="start"
             side="bottom"
           >
-            {organizations.map((organization) => (
-              <DropdownMenuItem
-                key={organization.id}
-                onClick={() => setActiveOrganization(organization)}
-                className="gap-2 p-2 group items-center"
-              >
-                <div className="flex size-6 items-center justify-center rounded-md border bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-3" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    {activeOrganization?.name}
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {activeOrganization?.description ?? "Организация"}
-                  </span>
-                </div>
+            {filteredOrganisations.length > 0 ? (
+              filteredOrganisations.map((organisation) => (
+                <DropdownMenuItem
+                  key={organisation.id}
+                  onClick={() => setOrganisation(organisation)}
+                  className="gap-2 p-2 group items-center"
+                >
+                  <OrganisationIcon />
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {organisation.name}
+                    </span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {organisation.description || "Без описания"}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              ))
+            ) : (
+              <DropdownMenuItem className="font-medium text-xs text-muted-foreground text-center justify-center">
+                Добавить организацию
               </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="font-medium text-xs text-muted-foreground text-center justify-center">
-              Добавить организацию
-            </DropdownMenuItem>
+            )}
+            {filteredOrganisations.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="font-medium text-xs text-muted-foreground text-center justify-center">
+                  Добавить организацию
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

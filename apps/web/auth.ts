@@ -12,7 +12,7 @@ import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
 import { authConfig } from "./auth.config";
-import { createOrganization } from "./actions/organizations";
+import { createOrganization } from "./actions/organisations";
 
 const credentialsSchema = z.object({
   email: z.string().email("Неверный формат email"),

@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getWeek } from "@workspace/ui/lib/utils";
 
 import { Button } from "../button";
-import { SidebarTrigger, useSidebar } from "../sidebar";
+import { useSidebar } from "../sidebar";
 
 import DayColumn from "./day-column";
 import TimeColumn from "./time-column";
@@ -143,8 +143,7 @@ const SchedulerContent = ({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between px-4 gap-4">
-        <SidebarTrigger />
+      <div className="flex items-center justify-end px-4 gap-4">
         <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground">
             {`${startOfWeek.toLocaleDateString("ru-RU", { month: "long" })} ${startOfWeek.getFullYear()} | Неделя ${weekNumber}`}

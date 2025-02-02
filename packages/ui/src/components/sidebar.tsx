@@ -18,6 +18,8 @@ import {
   TooltipTrigger,
 } from "@workspace/ui/components/tooltip";
 
+import { IconLayoutSidebarFilled } from "@tabler/icons-react";
+
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
@@ -285,7 +287,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <IconLayoutSidebarFilled />
       <span className="sr-only">
         {state === "expanded"
           ? "Свернуть боковую панель"

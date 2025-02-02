@@ -5,6 +5,9 @@ import { organizations } from "@workspace/database/models/organizations";
 import { roles } from "@workspace/database/models/roles";
 import { usersToOrganizations, users } from "@workspace/database/models/users";
 import { eq } from "drizzle-orm";
+import { TOrganisation } from "@workspace/database/types";
+
+import { auth } from "@/auth";
 
 export type CreateOrganizationParams = {
   name: string;
@@ -69,40 +72,37 @@ export async function createOrganization(
 /**
  * Получает все организации пользователя
  */
-export async function getUserOrganizations(userId: string) {
+export async function getUserOrganizations(
+  userId: string,
+): Promise<TOrganisation[]> {
   const userWithOrgs = await db.query.users.findFirst({
     where: eq(users.id, userId),
     with: {
       organizations: {
         with: {
           organization: true,
-          role: true,
         },
       },
     },
   });
 
-  return (
-    userWithOrgs?.organizations.map((org) => ({
-      id: org.organization.id,
-      name: org.organization.name,
-      description: org.organization.description,
-    })) || []
-  );
+  return userWithOrgs?.organizations.map((org) => org.organization) || [];
 }
 
 /**
  * Получает выбранную организацию пользователя
  */
-export async function getSelectedOrganization(userId: string) {
+export async function getSelectedOrganization(): Promise<TOrganisation> {
+  const session = await auth();
+
   const user = await db.query.users.findFirst({
-    where: eq(users.id, userId),
+    where: eq(users.id, session!.user!.id!),
     with: {
       selectedOrganization: true,
     },
   });
 
-  return user?.selectedOrganization;
+  return user!.selectedOrganization!;
 }
 
 /**
@@ -118,4 +118,24 @@ export async function updateSelectedOrganization(
       selectedOrganizationId: organizationId,
     })
     .where(eq(users.id, userId));
+}
+
+/**
+ * Обновляет данные организации
+ * @param data Обновляемые поля организации
+ */
+export async function updateCurrentOrganization(data: Partial<TOrganisation>) {
+  const organization = await getSelectedOrganization();
+
+  if (!organization) {
+    return;
+  }
+
+  const [updatedOrganization] = await db
+    .update(organizations)
+    .set(data)
+    .where(eq(organizations.id, organization.id))
+    .returning();
+
+  return updatedOrganization;
 }

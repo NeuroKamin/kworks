@@ -13,6 +13,7 @@
   "exports": {
     "./schema": "./schema.ts",
     "./models/*": "./models/*.ts",
+    "./types": "./types.ts",
     ".": "./index.ts"
   },
   "dependencies": {

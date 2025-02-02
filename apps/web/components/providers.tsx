@@ -3,8 +3,17 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
+import { TOrganisation } from "@workspace/database/types";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+import { OrganisationProvider } from "@/store/organistaion";
+
+export function Providers({
+  children,
+  selectedOrganisation,
+}: {
+  children: React.ReactNode;
+  selectedOrganisation: TOrganisation;
+}) {
   return (
     <NextThemesProvider
       attribute="class"
@@ -13,7 +22,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      <SessionProvider>{children}</SessionProvider>
+      <SessionProvider>
+        <OrganisationProvider organisation={selectedOrganisation}>
+          {children}
+        </OrganisationProvider>
+      </SessionProvider>
     </NextThemesProvider>
   );
 }

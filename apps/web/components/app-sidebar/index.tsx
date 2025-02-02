@@ -10,8 +10,7 @@ import { NavUser } from "./nav-user";
 import { NavOrganisations } from "./nav-organisations";
 import { NavMain } from "./nav-main";
 
-import { getSelectedOrganization } from "@/actions/organizations";
-import { getUserOrganizations } from "@/actions/organizations";
+import { getUserOrganizations } from "@/actions/organisations";
 import { auth } from "@/auth";
 import { getSidebarItems } from "@/actions/sidebar";
 
@@ -22,21 +21,15 @@ export async function AppSidebar() {
     return null;
   }
 
-  const [organizations, selectedOrganization, sidebarItems] = await Promise.all(
-    [
-      getUserOrganizations(session.user.id!),
-      getSelectedOrganization(session.user.id!),
-      getSidebarItems(),
-    ],
-  );
+  const [organizations, sidebarItems] = await Promise.all([
+    getUserOrganizations(session.user.id!),
+    getSidebarItems(),
+  ]);
 
   return (
     <Sidebar collapsible="icon" className="z-50">
       <SidebarHeader>
-        <NavOrganisations
-          organizations={organizations}
-          selectedOrganization={selectedOrganization?.id ?? ""}
-        />
+        <NavOrganisations organisations={organizations} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={sidebarItems} />

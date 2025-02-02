@@ -22,6 +22,7 @@ export interface SidebarItem {
     icon: React.ElementType;
     trailingIcon?: React.ElementType;
     trailingUrl?: string;
+    tooltip?: string;
   }[];
 }
 
@@ -69,18 +70,21 @@ export async function getSidebarItems() {
       items: [
         {
           title: "Пользователи",
-          url: "/organization/users",
+          url: "/organisation/users",
           icon: IconUserFilled,
+          tooltip: "Пользователи организации",
         },
         {
           title: "Роли",
-          url: "/organization/roles",
+          url: "/organisation/roles",
           icon: IconLockFilled,
+          tooltip: "Роли организации",
         },
         {
           title: "Настройки",
-          url: "/organization/settings",
+          url: "/organisation/settings",
           icon: IconSettingsFilled,
+          tooltip: "Настройки организации",
         },
       ],
     },

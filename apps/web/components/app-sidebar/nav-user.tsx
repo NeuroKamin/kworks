@@ -55,7 +55,7 @@ export async function NavUser() {
           <DropdownMenuContent
             className="w-full min-w-56 rounded-lg"
             side="top"
-            align="center"
+            align="start"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
