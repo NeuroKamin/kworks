@@ -1,0 +1,20 @@
+export enum OrganizationPermission {
+    MANAGE_MEMBERS = 'MANAGE_MEMBERS',
+    MANAGE_ROLES = 'MANAGE_ROLES',
+    MANAGE_PROJECTS = 'MANAGE_PROJECTS',
+    MANAGE_SETTINGS = 'MANAGE_SETTINGS'
+}
+
+export enum ProjectPermission {
+    MANAGE_MEMBERS = 'MANAGE_MEMBERS',
+    MANAGE_ROLES = 'MANAGE_ROLES',
+    MANAGE_SETTINGS = 'MANAGE_SETTINGS',
+    CREATE_TASKS = 'CREATE_TASKS',
+    EDIT_TASKS = 'EDIT_TASKS',
+    DELETE_TASKS = 'DELETE_TASKS',
+    VIEW_TASKS = 'VIEW_TASKS',
+    COMMENT_TASKS = 'COMMENT_TASKS',
+    MANAGE_LABELS = 'MANAGE_LABELS'
+}
+
+export type Permission = OrganizationPermission | ProjectPermission; 

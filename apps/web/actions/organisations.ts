@@ -6,6 +6,7 @@ import { roles } from "@workspace/database/models/roles";
 import { usersToOrganizations, users } from "@workspace/database/models/users";
 import { eq } from "drizzle-orm";
 import { TOrganisation } from "@workspace/database/types";
+import { OrganizationPermission } from "@workspace/database/models/permissions";
 
 import { auth } from "@/auth";
 
@@ -37,12 +38,13 @@ export async function createOrganization(
     })
     .returning();
 
-  // Создаем роль владельца
+  // Создаем роль владельца со всеми разрешениями
   const [ownerRole] = await db
     .insert(roles)
     .values({
       name: "Владелец",
       organizationId: organization.id,
+      permissions: Object.values(OrganizationPermission),
     })
     .returning();
 

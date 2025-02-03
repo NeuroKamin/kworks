@@ -4,6 +4,7 @@ import { Input } from "@workspace/ui/components/input";
 import { cn } from "@workspace/ui/lib/utils";
 
 import { useOrganisation } from "@/store/organistaion";
+import { OrganisationIcon } from "@/components/organisation-icon";
 
 const className =
   "leading-none h-auto shadow-none ring-0 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold text-xl! p-0";
@@ -13,12 +14,15 @@ const SettingsForm = () => {
 
   return (
     <div className="flex flex-col gap-1 mt-2">
-      <Input
-        placeholder="Название организации"
-        value={currentOrganisation.name}
-        className={className}
-        onChange={(e) => updateOrganisation({ name: e.target.value })}
-      />
+      <div className="flex items-center gap-2">
+        <OrganisationIcon />
+        <Input
+          placeholder="Название организации"
+          value={currentOrganisation.name}
+          className={cn(className, "text-3xl! font-bold")}
+          onChange={(e) => updateOrganisation({ name: e.target.value })}
+        />
+      </div>
       <Input
         placeholder="Описание организации"
         value={currentOrganisation.description || ""}
