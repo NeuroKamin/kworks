@@ -1,7 +1,7 @@
 import WIP from "@/components/wip";
 
-const BoardPage = () => {
+const TasksPage = () => {
   return <WIP />;
 };
 
-export default BoardPage;
+export default TasksPage;

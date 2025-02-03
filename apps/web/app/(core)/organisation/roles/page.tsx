@@ -1,7 +1,7 @@
 import WIP from "@/components/wip";
 
-const BoardPage = () => {
+const RolesPage = () => {
   return <WIP />;
 };
 
-export default BoardPage;
+export default RolesPage;
