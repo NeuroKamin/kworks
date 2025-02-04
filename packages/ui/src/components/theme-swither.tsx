@@ -7,7 +7,7 @@ import { cn } from "../lib/utils";
 import { Button } from "./button";
 const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
-  console.log(theme);
+
   const buttons = [
     {
       label: "light",

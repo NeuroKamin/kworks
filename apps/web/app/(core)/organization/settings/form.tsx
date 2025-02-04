@@ -3,31 +3,31 @@
 import { Input } from "@workspace/ui/components/input";
 import { cn } from "@workspace/ui/lib/utils";
 
-import { useOrganisation } from "@/store/organistaion";
-import { OrganisationIcon } from "@/components/organisation-icon";
+import { useOrganization } from "@/store/organistaion";
+import { OrganizationIcon } from "@/components/organization-icon";
 
 const className =
   "leading-none h-auto shadow-none ring-0 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 font-bold text-xl! p-0";
 
 const SettingsForm = () => {
-  const { currentOrganisation, updateOrganisation } = useOrganisation();
+  const { currentOrganization, updateOrganization } = useOrganization();
 
   return (
     <div className="flex flex-col gap-1 mt-2">
       <div className="flex items-center gap-2">
-        <OrganisationIcon />
+        <OrganizationIcon />
         <Input
           placeholder="Название организации"
-          value={currentOrganisation.name}
+          value={currentOrganization.name}
           className={cn(className, "text-3xl! font-bold")}
-          onChange={(e) => updateOrganisation({ name: e.target.value })}
+          onChange={(e) => updateOrganization({ name: e.target.value })}
         />
       </div>
       <Input
         placeholder="Описание организации"
-        value={currentOrganisation.description || ""}
+        value={currentOrganization.description || ""}
         className={cn(className, "text-sm! font-normal text-muted-foreground")}
-        onChange={(e) => updateOrganisation({ description: e.target.value })}
+        onChange={(e) => updateOrganization({ description: e.target.value })}
       />
     </div>
   );

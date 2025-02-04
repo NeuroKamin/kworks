@@ -1,3 +1,3 @@
 import { organizations } from "./schema";
 
-export type TOrganisation = typeof organizations.$inferSelect;
+export type TOrganization = typeof organizations.$inferSelect;

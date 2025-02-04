@@ -11,6 +11,8 @@ import {
   ProjectPermission,
 } from "@workspace/database/models/permissions";
 
+import { getSelectedOrganization } from "./organizations";
+
 import { auth } from "@/auth";
 
 /**
@@ -57,13 +59,30 @@ export async function getUserProjectRole(projectId: string) {
  * Проверяет наличие разрешения у пользователя в организации
  */
 export async function hasOrganizationPermission(
-  organizationId: string,
   permission: OrganizationPermission,
+  organizationId?: string | undefined,
 ): Promise<boolean> {
+  if (!organizationId) {
+    organizationId = (await getSelectedOrganization()).id;
+  }
+
   const role = await getUserOrganizationRole(organizationId);
   if (!role) return false;
 
   return role.permissions.includes(permission);
+}
+
+export async function getOrganizationPermissions(
+  organizationId?: string | undefined,
+): Promise<OrganizationPermission[]> {
+  if (!organizationId) {
+    organizationId = (await getSelectedOrganization()).id;
+  }
+
+  const role = await getUserOrganizationRole(organizationId);
+  if (!role) return [];
+
+  return role.permissions;
 }
 
 /**

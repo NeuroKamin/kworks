@@ -5,7 +5,7 @@ import { organizations } from "@workspace/database/models/organizations";
 import { roles } from "@workspace/database/models/roles";
 import { usersToOrganizations, users } from "@workspace/database/models/users";
 import { eq } from "drizzle-orm";
-import { TOrganisation } from "@workspace/database/types";
+import { TOrganization } from "@workspace/database/types";
 import { OrganizationPermission } from "@workspace/database/models/permissions";
 
 import { auth } from "@/auth";
@@ -76,7 +76,7 @@ export async function createOrganization(
  */
 export async function getUserOrganizations(
   userId: string,
-): Promise<TOrganisation[]> {
+): Promise<TOrganization[]> {
   const userWithOrgs = await db.query.users.findFirst({
     where: eq(users.id, userId),
     with: {
@@ -94,7 +94,7 @@ export async function getUserOrganizations(
 /**
  * Получает выбранную организацию пользователя
  */
-export async function getSelectedOrganization(): Promise<TOrganisation> {
+export async function getSelectedOrganization(): Promise<TOrganization> {
   const session = await auth();
 
   const user = await db.query.users.findFirst({
@@ -126,7 +126,7 @@ export async function updateSelectedOrganization(
  * Обновляет данные организации
  * @param data Обновляемые поля организации
  */
-export async function updateCurrentOrganization(data: Partial<TOrganisation>) {
+export async function updateCurrentOrganization(data: Partial<TOrganization>) {
   const organization = await getSelectedOrganization();
 
   if (!organization) {

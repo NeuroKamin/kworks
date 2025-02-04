@@ -7,10 +7,10 @@ import {
 } from "@workspace/ui/components/sidebar";
 
 import { NavUser } from "./nav-user";
-import { NavOrganisations } from "./nav-organisations";
+import { NavOrganizations } from "./nav-organizations";
 import { NavMain } from "./nav-main";
 
-import { getUserOrganizations } from "@/actions/organisations";
+import { getUserOrganizations } from "@/actions/organizations";
 import { auth } from "@/auth";
 import { getSidebarItems } from "@/actions/sidebar";
 
@@ -29,7 +29,7 @@ export async function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="z-50">
       <SidebarHeader>
-        <NavOrganisations organisations={organizations} />
+        <NavOrganizations Organizations={organizations} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={sidebarItems} />

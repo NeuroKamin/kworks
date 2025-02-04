@@ -14,20 +14,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar";
-import { TOrganisation } from "@workspace/database/types";
+import { TOrganization } from "@workspace/database/types";
 
-import { OrganisationIcon } from "@/components/organisation-icon";
-import { useOrganisation } from "@/store/organistaion";
+import { OrganizationIcon } from "@/components/organization-icon";
+import { useOrganization } from "@/store/organistaion";
 
-export function NavOrganisations({
-  organisations,
+export function NavOrganizations({
+  Organizations,
 }: {
-  organisations: TOrganisation[];
+  Organizations: TOrganization[];
 }) {
-  const { currentOrganisation, setOrganisation } = useOrganisation();
+  const { currentOrganization, setOrganization } = useOrganization();
 
-  const filteredOrganisations = organisations.filter(
-    (organisation) => organisation.id !== currentOrganisation.id,
+  const filteredOrganizations = Organizations.filter(
+    (Organization) => Organization.id !== currentOrganization.id,
   );
 
   return (
@@ -39,13 +39,13 @@ export function NavOrganisations({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <OrganisationIcon />
+              <OrganizationIcon />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {currentOrganisation?.name}
+                  {currentOrganization?.name}
                 </span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {currentOrganisation?.description || "Без описания"}
+                  {currentOrganization?.description || "Без описания"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto" />
@@ -56,20 +56,20 @@ export function NavOrganisations({
             align="start"
             side="bottom"
           >
-            {filteredOrganisations.length > 0 ? (
-              filteredOrganisations.map((organisation) => (
+            {filteredOrganizations.length > 0 ? (
+              filteredOrganizations.map((Organization) => (
                 <DropdownMenuItem
-                  key={organisation.id}
-                  onClick={() => setOrganisation(organisation)}
+                  key={Organization.id}
+                  onClick={() => setOrganization(Organization)}
                   className="gap-2 p-2 group items-center"
                 >
-                  <OrganisationIcon />
+                  <OrganizationIcon />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {organisation.name}
+                      {Organization.name}
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {organisation.description || "Без описания"}
+                      {Organization.description || "Без описания"}
                     </span>
                   </div>
                 </DropdownMenuItem>
@@ -79,7 +79,7 @@ export function NavOrganisations({
                 Добавить организацию
               </DropdownMenuItem>
             )}
-            {filteredOrganisations.length > 0 && (
+            {filteredOrganizations.length > 0 && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="font-medium text-xs text-muted-foreground text-center justify-center">

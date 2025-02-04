@@ -10,24 +10,59 @@ import {
   IconSettingsFilled,
   IconUserFilled,
 } from "@tabler/icons-react";
+import { OrganizationPermission } from "@workspace/database/models/permissions";
 
-import { auth } from "@/auth";
+import { getOrganizationPermissions } from "./permissions";
 
+interface SidebarSubItem {
+  title: string;
+  url: string;
+  icon: React.ElementType;
+  trailingIcon?: React.ElementType;
+  trailingUrl?: string;
+  tooltip?: string;
+}
 export interface SidebarItem {
   id: string;
   title?: string;
-  items: {
-    title: string;
-    url: string;
-    icon: React.ElementType;
-    trailingIcon?: React.ElementType;
-    trailingUrl?: string;
-    tooltip?: string;
-  }[];
+  items: SidebarSubItem[];
 }
 
 export async function getSidebarItems() {
-  const session = await auth();
+  const permissions = await getOrganizationPermissions();
+
+  const OrganizationMenu: SidebarItem = {
+    id: "3",
+    title: "Организация",
+    items: [],
+  };
+
+  if (permissions.includes(OrganizationPermission.MANAGE_MEMBERS)) {
+    OrganizationMenu.items.push({
+      title: "Пользователи",
+      url: "/organization/users",
+      icon: IconUserFilled,
+      tooltip: "Пользователи организации",
+    });
+  }
+
+  if (permissions.includes(OrganizationPermission.MANAGE_ROLES)) {
+    OrganizationMenu.items.push({
+      title: "Роли",
+      url: "/organization/roles",
+      icon: IconLockFilled,
+      tooltip: "Роли организации",
+    });
+  }
+
+  if (permissions.includes(OrganizationPermission.MANAGE_SETTINGS)) {
+    OrganizationMenu.items.push({
+      title: "Настройки",
+      url: "/organization/settings",
+      icon: IconSettingsFilled,
+      tooltip: "Настройки организации",
+    });
+  }
 
   const items: SidebarItem[] = [
     {
@@ -64,31 +99,11 @@ export async function getSidebarItems() {
         },
       ],
     },
-    {
-      id: "3",
-      title: "Организация",
-      items: [
-        {
-          title: "Пользователи",
-          url: "/organisation/users",
-          icon: IconUserFilled,
-          tooltip: "Пользователи организации",
-        },
-        {
-          title: "Роли",
-          url: "/organisation/roles",
-          icon: IconLockFilled,
-          tooltip: "Роли организации",
-        },
-        {
-          title: "Настройки",
-          url: "/organisation/settings",
-          icon: IconSettingsFilled,
-          tooltip: "Настройки организации",
-        },
-      ],
-    },
   ];
+
+  if (OrganizationMenu.items.length > 0) {
+    items.push(OrganizationMenu);
+  }
 
   return items;
 }

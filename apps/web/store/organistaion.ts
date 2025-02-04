@@ -6,18 +6,18 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import { TOrganisation } from "@workspace/database/types";
+import { TOrganization } from "@workspace/database/types";
 import { useDebounceCallback } from "@workspace/ui/hooks/use-debounce";
 
-import { updateCurrentOrganization } from "@/actions/organisations";
+import { updateCurrentOrganization } from "@/actions/organizations";
 
-interface OrganisationContextValue {
-  currentOrganisation: TOrganisation;
-  setOrganisation: (organisation: TOrganisation) => void;
-  updateOrganisation: (organisation: Partial<TOrganisation>) => void;
+interface OrganizationContextValue {
+  currentOrganization: TOrganization;
+  setOrganization: (Organization: TOrganization) => void;
+  updateOrganization: (Organization: Partial<TOrganization>) => void;
 }
 
-const defaultOrganisation: TOrganisation = {
+const defaultOrganization: TOrganization = {
   id: "",
   name: "",
   description: "",
@@ -25,56 +25,56 @@ const defaultOrganisation: TOrganisation = {
   updatedAt: new Date(),
 };
 
-const OrganisationContext = createContext<OrganisationContextValue>({
-  currentOrganisation: defaultOrganisation,
-  setOrganisation: () => {},
-  updateOrganisation: () => {},
+const OrganizationContext = createContext<OrganizationContextValue>({
+  currentOrganization: defaultOrganization,
+  setOrganization: () => {},
+  updateOrganization: () => {},
 });
 
-interface OrganisationProviderProps {
-  organisation: TOrganisation;
+interface OrganizationProviderProps {
+  Organization: TOrganization;
   children: ReactNode;
 }
 
-export const OrganisationProvider = ({
-  organisation,
+export const OrganizationProvider = ({
+  Organization,
   children,
-}: OrganisationProviderProps) => {
-  const [currentOrganisation, setCurrentOrganisation] =
-    useState<TOrganisation>(organisation);
+}: OrganizationProviderProps) => {
+  const [currentOrganization, setCurrentOrganization] =
+    useState<TOrganization>(Organization);
 
   const debouncedUpdateServer = useDebounceCallback(
-    (data: Partial<TOrganisation>) => {
+    (data: Partial<TOrganization>) => {
       return updateCurrentOrganization(data);
     },
     500,
   );
 
-  const setOrganisation = (organisation: TOrganisation) => {
-    setCurrentOrganisation(organisation);
+  const setOrganization = (Organization: TOrganization) => {
+    setCurrentOrganization(Organization);
   };
 
-  const updateOrganisation = useCallback(
-    (organisation: Partial<TOrganisation>) => {
-      setCurrentOrganisation((prev) => ({ ...prev, ...organisation }));
-      debouncedUpdateServer(organisation);
+  const updateOrganization = useCallback(
+    (Organization: Partial<TOrganization>) => {
+      setCurrentOrganization((prev) => ({ ...prev, ...Organization }));
+      debouncedUpdateServer(Organization);
     },
     [debouncedUpdateServer],
   );
 
   return React.createElement(
-    OrganisationContext.Provider,
-    { value: { currentOrganisation, setOrganisation, updateOrganisation } },
+    OrganizationContext.Provider,
+    { value: { currentOrganization, setOrganization, updateOrganization } },
     children,
   );
 };
 
-export const useOrganisation = () => useContext(OrganisationContext);
+export const useOrganization = () => useContext(OrganizationContext);
 
 // Хук для гидратации состояния организации
-export function useHydrateOrganisationStore(organisation: TOrganisation) {
-  const { setOrganisation } = useOrganisation();
+export function useHydrateOrganizationStore(Organization: TOrganization) {
+  const { setOrganization } = useOrganization();
   useEffect(() => {
-    setOrganisation(organisation);
-  }, [organisation, setOrganisation]);
+    setOrganization(Organization);
+  }, [Organization, setOrganization]);
 }

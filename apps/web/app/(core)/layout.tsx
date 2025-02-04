@@ -3,15 +3,15 @@ import { cookies } from "next/headers";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { Providers } from "@/components/providers";
-import { getSelectedOrganization } from "@/actions/organisations";
+import { getSelectedOrganization } from "@/actions/organizations";
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const cookie = (await cookies()).get("sidebar:state");
   const open = cookie?.value === "true";
-  const selectedOrganisation = await getSelectedOrganization();
+  const selectedOrganization = await getSelectedOrganization();
 
   return (
-    <Providers selectedOrganisation={selectedOrganisation}>
+    <Providers selectedOrganization={selectedOrganization}>
       <SidebarProvider defaultOpen={open}>
         <AppSidebar />
         <main className="w-full h-full">{children}</main>
