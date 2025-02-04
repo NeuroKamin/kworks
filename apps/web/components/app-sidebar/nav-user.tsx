@@ -74,6 +74,8 @@ export async function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <ThemeSwitcher />
+            <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
               <DropdownMenuItem>
@@ -86,7 +88,6 @@ export async function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
-            <ThemeSwitcher />
             <SignOut />
           </DropdownMenuContent>
         </DropdownMenu>
