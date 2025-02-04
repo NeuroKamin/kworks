@@ -19,7 +19,6 @@ export function Providers({
       attribute="class"
       defaultTheme="light"
       enableSystem
-      disableTransitionOnChange
       enableColorScheme
     >
       <SessionProvider>

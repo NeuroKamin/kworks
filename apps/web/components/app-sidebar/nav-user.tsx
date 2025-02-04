@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
+import ThemeSwitcher from "@workspace/ui/components/theme-swither";
 import {
   Avatar,
   AvatarFallback,
@@ -84,7 +85,8 @@ export async function NavUser() {
                 Уведомления
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
+
+            <ThemeSwitcher />
             <SignOut />
           </DropdownMenuContent>
         </DropdownMenu>
