@@ -22,12 +22,12 @@ interface Props {
   invitedByUsername?: string;
   invitedByEmail?: string;
   inviteLink?: string;
-  teamName?: string;
+  organizationName?: string;
 }
 
-const UserInviteTemplate = ({ invitedByUsername, inviteLink, teamName, invitedByEmail }: Props) => {
-  const previewText = teamName ? `Присоединитесь к ${teamName} в личном кабинете КАМИН`
-    : `Присоединитесь к личному кабинету КАМИН`
+const UserInviteTemplate = ({ invitedByUsername, inviteLink,  organizationName, invitedByEmail }: Props) => {
+  const previewText = organizationName ? `Присоединитесь к ${organizationName}`
+    : `Присоединитесь к kworks`
 
   return (
     <Html>
@@ -40,7 +40,7 @@ const UserInviteTemplate = ({ invitedByUsername, inviteLink, teamName, invitedBy
               <Logo />
             </Section>
             <Section className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              Присоединитесь к личному кабинету <strong>ГК КАМИН</strong>
+              Присоединитесь к kworks 
             </Section>
 
             <Text className="text-black text-[14px] leading-[24px]">
@@ -52,8 +52,8 @@ const UserInviteTemplate = ({ invitedByUsername, inviteLink, teamName, invitedBy
                 {invitedByEmail}
               </Link>
               ) пригласил вас в {
-                teamName ? <><strong>{teamName}</strong> в личном кабинете <strong>КАМИН</strong></>
-                  : <>личный кабинет <strong>КАМИН</strong></>
+                organizationName ? <><strong>{organizationName}</strong> в kworks</>
+                  : <>kworks</>
               }.
             </Text>
 

@@ -31,6 +31,10 @@ export interface SidebarItem {
 export async function getSidebarItems() {
   const permissions = await getOrganizationPermissions();
 
+  const canCreateProjects = permissions.includes(
+    OrganizationPermission.MANAGE_PROJECTS,
+  );
+
   const OrganizationMenu: SidebarItem = {
     id: "3",
     title: "Организация",
@@ -87,8 +91,10 @@ export async function getSidebarItems() {
           title: "Проекты",
           url: "/projects",
           icon: IconFolderFilled,
-          trailingIcon: IconPlus,
-          trailingUrl: "/projects/new",
+          ...(canCreateProjects && {
+            trailingIcon: IconPlus,
+            trailingUrl: "/projects/new",
+          }),
         },
         {
           title: "Задачи",

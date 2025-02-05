@@ -1,5 +1,5 @@
-import { JWT } from "@auth/core/jwt"
-import { NextAuthConfig } from "next-auth"
+import { JWT } from "@auth/core/jwt";
+import { NextAuthConfig } from "next-auth";
 
 export const authConfig: NextAuthConfig = {
   trustHost: true,
@@ -17,39 +17,39 @@ export const authConfig: NextAuthConfig = {
   ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
-      let isLoggedIn = !!auth?.user
-      let isOnAuth = nextUrl.pathname.startsWith("/auth")
-      let isOninvite = nextUrl.pathname.startsWith("/invitations/accept")
+      const isLoggedIn = !!auth?.user;
+      const isOnAuth = nextUrl.pathname.startsWith("/auth");
+      const isOninvite = nextUrl.pathname.startsWith("/invitations/accept");
 
       if (isLoggedIn && (isOnAuth || isOninvite)) {
-        return Response.redirect(new URL("/", nextUrl))
+        return Response.redirect(new URL("/", nextUrl));
       }
 
       if (!isLoggedIn && !isOnAuth && !isOninvite) {
-        return Response.redirect(new URL("/auth/login", nextUrl))
+        return Response.redirect(new URL("/auth/login", nextUrl));
       }
 
-      return true
+      return true;
     },
     async jwt(props) {
       if (props.trigger == "update") {
-        props.token = { ...props.token, ...props.session }
+        props.token = { ...props.token, ...props.session };
       }
 
-      return props.token
+      return props.token;
     },
     async session(props) {
-      const { token } = props as { token: JWT }
-      
+      const { token } = props as { token: JWT };
+
       if (props.session.user && token.sub) {
-        props.session.user.id = token.sub
+        props.session.user.id = token.sub;
         if (token.image) {
-          props.session.user.image = token.image as string
+          props.session.user.image = token.image as string;
         } else {
-          props.session.user.image = token.picture
+          props.session.user.image = token.picture;
         }
       }
-      return props.session
+      return props.session;
     },
   },
-} 
+};

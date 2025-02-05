@@ -45,14 +45,26 @@ export const sendForgotPasswordEmail = async (email: string, url: string) => {
 
 }
 
-export const sendInviteUserEmail = async (email: string, inviteLink: string, invitedByUsername: string, invitedByEmail: string, teamName?: string) => {
+export const sendInviteUserEmail = async ({
+  email,
+  inviteLink,
+  invitedByUsername,
+  invitedByEmail,
+  organizationName,
+}: {
+  email: string;
+  inviteLink: string;
+  invitedByUsername: string;
+  invitedByEmail: string;
+  organizationName?: string;
+}) => {
 
     try {
         await transport.sendMail({
             to: email,
             from: process.env.EMAIL_FROM,
             subject: `Приглашение`,
-            html: render(<UserInviteTemplate inviteLink={inviteLink} invitedByUsername={invitedByUsername} invitedByEmail={invitedByEmail} teamName={teamName} />),
+            html: render(<UserInviteTemplate inviteLink={inviteLink} invitedByUsername={invitedByUsername} invitedByEmail={invitedByEmail} organizationName={organizationName} />),
         })
     } catch (error) {
         console.error(error)

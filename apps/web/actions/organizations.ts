@@ -4,9 +4,13 @@ import { db } from "@workspace/database";
 import { organizations } from "@workspace/database/models/organizations";
 import { roles } from "@workspace/database/models/roles";
 import { usersToOrganizations, users } from "@workspace/database/models/users";
-import { eq } from "drizzle-orm";
-import { TOrganization } from "@workspace/database/types";
+import { and, eq } from "drizzle-orm";
+import { TInvitation, TOrganization, TUser } from "@workspace/database/types";
 import { OrganizationPermission } from "@workspace/database/models/permissions";
+import { invitations } from "@workspace/database/models/invitations";
+import { sendInviteUserEmail } from "@workspace/mailer";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 
@@ -140,4 +144,95 @@ export async function updateCurrentOrganization(data: Partial<TOrganization>) {
     .returning();
 
   return updatedOrganization;
+}
+
+/**
+ * Получает список пользователей выбранной организации
+ */
+export async function getOrganizationUsers(): Promise<TUser[]> {
+  const organization = await getSelectedOrganization();
+
+  if (!organization) {
+    return [];
+  }
+
+  const organizationUsers = await db.query.usersToOrganizations.findMany({
+    where: eq(usersToOrganizations.organizationId, organization.id),
+    with: {
+      user: true,
+    },
+  });
+
+  return organizationUsers.map((user) => user.user);
+}
+
+/**
+ * Получает список приглашений в выбранную организацию
+ */
+export async function getOrganizationInvites(): Promise<TInvitation[]> {
+  const organization = await getSelectedOrganization();
+
+  if (!organization) {
+    return [];
+  }
+
+  const invites = await db.query.invitations.findMany({
+    where: eq(invitations.organizationId, organization.id),
+  });
+
+  return invites;
+}
+
+export async function inviteUsersToOrganization(data: FormData) {
+  const organization = await getSelectedOrganization();
+  const session = await auth();
+  if (!organization) {
+    return;
+  }
+
+  const emails = data.get("emails")?.toString().split("\n") || [];
+  const origin = (await headers()).get("origin");
+  for (const _email of emails) {
+    const email = _email.trim();
+    if (!email) {
+      continue;
+    }
+
+    const existingInvite = await db.query.invitations.findFirst({
+      where: and(
+        eq(invitations.email, email),
+        eq(invitations.organizationId, organization.id),
+      ),
+    });
+
+    let token;
+    if (existingInvite) {
+      token = existingInvite.token;
+      await db
+        .update(invitations)
+        .set({
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+          status: "Отправлено",
+        })
+        .where(eq(invitations.id, existingInvite.id));
+    } else {
+      token = crypto.randomUUID();
+      await db.insert(invitations).values({
+        email,
+        token,
+        organizationId: organization.id,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        status: "Отправлено",
+      });
+    }
+
+    await sendInviteUserEmail({
+      email,
+      inviteLink: `${origin}/invitations/accept/${token}`,
+      invitedByUsername: session!.user!.name!,
+      invitedByEmail: session!.user!.email!,
+      organizationName: organization.name,
+    });
+  }
+  redirect("/organization/users?tab=invites");
 }
