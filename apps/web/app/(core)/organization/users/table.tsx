@@ -80,7 +80,7 @@ const UsersTable = ({
 
   let table = null;
 
-  if (tab === "users") {
+  if (tab === "users" || !tab) {
     table = <DataTable columns={userColumn} data={users} actions={actionBar} />;
   } else {
     table = (
