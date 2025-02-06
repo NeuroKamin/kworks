@@ -11,6 +11,40 @@ import { SidebarMenuButton } from "./sidebar-menu-button";
 
 import { SidebarItem } from "@/actions/sidebar";
 
+// type TItem = {
+//   courses: TCourse[];
+//   formats: TFormat[];
+// };
+
+// type TCourse = {
+//   id: string;
+//   title: string;
+//   description: string;
+//   buyUrl: string;
+//   schedule: TSchedule[];
+//   formatIds: string[];
+//   prices: TPrice[];
+// };
+
+// type TSchedule = {
+//   formatId: string;
+//   dateFrom: string;
+//   dateTo: string;
+//   timeFrom: string;
+//   timeTo: string;
+// };
+
+// type TPrice = {
+//   title: string;
+//   price: number;
+// };
+
+// type TFormat = {
+//   id: string;
+//   title: string;
+//   description: string;
+// };
+
 export function NavMain({ items }: { items: SidebarItem[] }) {
   console.log(items);
 

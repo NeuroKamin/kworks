@@ -231,3 +231,7 @@ export async function inviteUsersToSpace(data: FormData) {
   }
   redirect("/space/users?tab=invites");
 }
+
+export async function deleteInvitation(invitationId: string) {
+  await db.delete(invitations).where(eq(invitations.id, invitationId));
+}

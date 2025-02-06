@@ -4,7 +4,7 @@ import { TInvitation, TUser } from "@workspace/database/types";
 import useColumns from "@workspace/ui/hooks/use-columns";
 import { DataTable } from "@workspace/ui/components/data-table";
 import { Button } from "@workspace/ui/components/button";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { useState } from "react";
 import {
@@ -19,20 +19,37 @@ import { Textarea } from "@workspace/ui/components/textarea";
 import { SubmitButton } from "@workspace/ui/components/form/submit-button";
 import { useFormStatus } from "react-dom";
 import { useQueryState } from "nuqs";
+import moment from "moment";
+import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
+import { toast } from "sonner";
 
-import { inviteUsersToSpace } from "@/actions/spaces";
+import { inviteUsersToSpace, deleteInvitation } from "@/actions/spaces";
 
 const UsersTable = ({
   users,
-  invites,
+  invites: initialInvites,
 }: {
   users: TUser[];
   invites: TInvitation[];
 }) => {
   const [tab, setTab] = useQueryState("tab");
-
+  const [invites, setInvites] = useState(initialInvites);
   const [isOpen, setIsOpen] = useState(false);
   const { pending } = useFormStatus();
+
+  const handleDeleteInvitation = async (id: string) => {
+    return toast.promise(
+      async () => {
+        await deleteInvitation(id);
+        setInvites((prev) => prev.filter((invite) => invite.id !== id));
+      },
+      {
+        loading: "Удаление приглашения...",
+        success: "Приглашение удалено",
+        error: "Не удалось удалить приглашение",
+      },
+    );
+  };
 
   const userColumn = useColumns<TUser>(
     {
@@ -56,8 +73,37 @@ const UsersTable = ({
       columns: [
         { header: "Статус", accessorKey: "status" },
         { header: "Email", accessorKey: "email" },
+        {
+          header: "Дата отправки",
+          accessorKey: "createdAt",
+          cell: ({ row }) =>
+            moment(row.original.createdAt).format("DD.MM.YYYY HH:mm"),
+        },
+        {
+          header: "Действует до",
+          accessorKey: "expiresAt",
+          cell: ({ row }) =>
+            moment(row.original.expiresAt).format("DD.MM.YYYY HH:mm"),
+        },
       ],
       hideSelection: true,
+      actions: (props) => (
+        <form
+          action={async () => {
+            await handleDeleteInvitation(props.row.original.id);
+          }}
+        >
+          <DropdownMenuItem
+            asChild
+            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+          >
+            <button type="submit" className="w-full">
+              <IconTrash size={16} className="mr-2" />
+              Удалить
+            </button>
+          </DropdownMenuItem>
+        </form>
+      ),
     },
     [],
   );
