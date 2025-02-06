@@ -4,7 +4,7 @@ import { TInvitation, TUser } from "@workspace/database/types";
 import useColumns from "@workspace/ui/hooks/use-columns";
 import { DataTable } from "@workspace/ui/components/data-table";
 import { Button } from "@workspace/ui/components/button";
-import { IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconRefresh } from "@tabler/icons-react";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { useState } from "react";
 import {
@@ -23,7 +23,11 @@ import moment from "moment";
 import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
 import { toast } from "sonner";
 
-import { inviteUsersToSpace, deleteInvitation } from "@/actions/spaces";
+import {
+  inviteUsersToSpace,
+  deleteInvitation,
+  resendInvitation,
+} from "@/actions/spaces";
 
 const UsersTable = ({
   users,
@@ -51,6 +55,30 @@ const UsersTable = ({
     );
   };
 
+  const handleResendInvitation = async (id: string) => {
+    return toast.promise(
+      async () => {
+        await resendInvitation(id);
+        setInvites((prev) =>
+          prev.map((invite) =>
+            invite.id === id
+              ? {
+                  ...invite,
+                  status: "Отправлено",
+                  expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+                }
+              : invite,
+          ),
+        );
+      },
+      {
+        loading: "Отправка приглашения...",
+        success: "Приглашение отправлено повторно",
+        error: "Не удалось отправить приглашение",
+      },
+    );
+  };
+
   const userColumn = useColumns<TUser>(
     {
       columns: [
@@ -74,12 +102,6 @@ const UsersTable = ({
         { header: "Статус", accessorKey: "status" },
         { header: "Email", accessorKey: "email" },
         {
-          header: "Дата отправки",
-          accessorKey: "createdAt",
-          cell: ({ row }) =>
-            moment(row.original.createdAt).format("DD.MM.YYYY HH:mm"),
-        },
-        {
           header: "Действует до",
           accessorKey: "expiresAt",
           cell: ({ row }) =>
@@ -88,21 +110,36 @@ const UsersTable = ({
       ],
       hideSelection: true,
       actions: (props) => (
-        <form
-          action={async () => {
-            await handleDeleteInvitation(props.row.original.id);
-          }}
-        >
-          <DropdownMenuItem
-            asChild
-            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+        <>
+          <form
+            action={async () => {
+              await handleResendInvitation(props.row.original.id);
+            }}
           >
-            <button type="submit" className="w-full">
-              <IconTrash size={16} className="mr-2" />
-              Удалить
-            </button>
-          </DropdownMenuItem>
-        </form>
+            <DropdownMenuItem asChild>
+              <button type="submit" className="w-full">
+                <IconRefresh size={16} className="mr-2" />
+                Переотправить
+              </button>
+            </DropdownMenuItem>
+          </form>
+
+          <form
+            action={async () => {
+              await handleDeleteInvitation(props.row.original.id);
+            }}
+          >
+            <DropdownMenuItem
+              asChild
+              className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+            >
+              <button type="submit" className="w-full">
+                <IconTrash size={16} className="mr-2" />
+                Удалить
+              </button>
+            </DropdownMenuItem>
+          </form>
+        </>
       ),
     },
     [],

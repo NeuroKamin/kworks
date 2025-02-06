@@ -235,3 +235,35 @@ export async function inviteUsersToSpace(data: FormData) {
 export async function deleteInvitation(invitationId: string) {
   await db.delete(invitations).where(eq(invitations.id, invitationId));
 }
+
+export async function resendInvitation(invitationId: string) {
+  "use server";
+
+  const space = await getSelectedSpace();
+  const session = await auth();
+  const origin = (await headers()).get("origin");
+
+  const invitation = await db.query.invitations.findFirst({
+    where: eq(invitations.id, invitationId),
+  });
+
+  if (!invitation) {
+    throw new Error("Приглашение не найдено");
+  }
+
+  await db
+    .update(invitations)
+    .set({
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      status: "Отправлено",
+    })
+    .where(eq(invitations.id, invitationId));
+
+  await sendInviteUserEmail({
+    email: invitation.email,
+    inviteLink: `${origin}/invitations/accept/${invitation.token}`,
+    invitedByUsername: session!.user!.name!,
+    invitedByEmail: session!.user!.email!,
+    spaceName: space.name,
+  });
+}
