@@ -1,8 +1,8 @@
-export enum OrganizationPermission {
-    MANAGE_MEMBERS = 'ORGANIZATION_MANAGE_MEMBERS',
-    MANAGE_ROLES = 'ORGANIZATION_MANAGE_ROLES',
-    MANAGE_PROJECTS = 'ORGANIZATION_MANAGE_PROJECTS',
-    MANAGE_SETTINGS = 'ORGANIZATION_MANAGE_SETTINGS'
+export enum SpacePermission {
+    MANAGE_MEMBERS = 'SPACE_MANAGE_MEMBERS',
+    MANAGE_ROLES = 'SPACE_MANAGE_ROLES',
+    MANAGE_PROJECTS = 'SPACE_MANAGE_PROJECTS',
+    MANAGE_SETTINGS = 'SPACE_MANAGE_SETTINGS'
 }
 
 export enum ProjectPermission {
@@ -17,4 +17,4 @@ export enum ProjectPermission {
     MANAGE_LABELS = 'PROJECT_MANAGE_LABELS'
 }
 
-export type Permission = OrganizationPermission | ProjectPermission; 
+export type Permission = SpacePermission | ProjectPermission; 

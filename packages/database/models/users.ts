@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 import type { AdapterAccountType } from "next-auth/adapters"
-import { organizations } from "./organizations"
+import { spaces } from "./spaces"
 import { projectRoles, roles } from "./roles"
 import { projects } from "./projects"
   
@@ -19,7 +19,7 @@ export const users = pgTable("user", {
   name: text("name"),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  selectedOrganizationId: text("selected_organization_id").references(() => organizations.id, { onDelete: "set null" }),
+  selectedSpaceId: text("selected_space_id").references(() => spaces.id, { onDelete: "set null" }),
   image: text("image"),
 })
 
@@ -97,15 +97,15 @@ export const authenticators = pgTable(
 )
 
 // Таблица для связи пользователей и организаций
-export const usersToOrganizations = pgTable(
-  'users_to_organizations',
+export const usersToSpaces = pgTable(
+  'users_to_spaces',
   {
       userId: text('user_id')
           .notNull()
           .references(() => users.id, { onDelete: 'cascade' }),
-      organizationId: text('organization_id')
+      spaceId: text('space_id')
           .notNull()
-          .references(() => organizations.id, { onDelete: 'cascade' }),
+          .references(() => spaces.id, { onDelete: 'cascade' }),
       roleId: text('role_id')
           .notNull()
           .references(() => roles.id, { onDelete: 'cascade' }),
@@ -113,7 +113,7 @@ export const usersToOrganizations = pgTable(
   },
   (table) => ({
       compoundKey: primaryKey({
-          columns: [table.userId, table.organizationId],
+          columns: [table.userId, table.spaceId],
       }),
   }),
 );

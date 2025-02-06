@@ -50,13 +50,13 @@ export const sendInviteUserEmail = async ({
   inviteLink,
   invitedByUsername,
   invitedByEmail,
-  organizationName,
+  spaceName,
 }: {
   email: string;
   inviteLink: string;
   invitedByUsername: string;
   invitedByEmail: string;
-  organizationName?: string;
+  spaceName?: string;
 }) => {
 
     try {
@@ -64,7 +64,7 @@ export const sendInviteUserEmail = async ({
             to: email,
             from: process.env.EMAIL_FROM,
             subject: `Приглашение`,
-            html: render(<UserInviteTemplate inviteLink={inviteLink} invitedByUsername={invitedByUsername} invitedByEmail={invitedByEmail} organizationName={organizationName} />),
+            html: render(<UserInviteTemplate inviteLink={inviteLink} invitedByUsername={invitedByUsername} invitedByEmail={invitedByEmail} spaceName={spaceName} />),
         })
     } catch (error) {
         console.error(error)

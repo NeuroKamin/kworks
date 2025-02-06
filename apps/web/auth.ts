@@ -12,7 +12,7 @@ import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 
 import { authConfig } from "./auth.config";
-import { createOrganization } from "./actions/organizations";
+import { createSpace } from "./actions/spaces";
 
 const credentialsSchema = z.object({
   email: z.string().email("Неверный формат email"),
@@ -39,7 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         pin: { label: "PIN", type: "text" },
         name: { label: "Имя", type: "text" },
       },
-      async authorize(credentials, request) {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.pin) {
           return null;
         }
@@ -107,8 +107,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               .returning();
 
             // Создаем организацию и связываем с пользователем
-            const { organization } = await createOrganization({
-              name: "Моя организация",
+            const { space } = await createSpace({
+              name: "Мое пространство",
               description: "Владелец " + validatedData.name,
               userId: newUser.id,
               setAsCurrent: true,
@@ -116,7 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             user = {
               ...newUser,
-              selectedOrganizationId: organization.id,
+              selectedSpaceId: space.id,
             };
           }
 

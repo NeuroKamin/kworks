@@ -3,16 +3,16 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
-import { TOrganization } from "@workspace/database/types";
+import { TSpace } from "@workspace/database/types";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-import { OrganizationProvider } from "@/store/organistaion";
+import { SpaceProvider } from "@/store/space";
 export function Providers({
   children,
-  selectedOrganization,
+  selectedSpace,
 }: {
   children: React.ReactNode;
-  selectedOrganization: TOrganization;
+  selectedSpace: TSpace;
 }) {
   return (
     <NextThemesProvider
@@ -23,9 +23,7 @@ export function Providers({
     >
       <NuqsAdapter>
         <SessionProvider>
-          <OrganizationProvider Organization={selectedOrganization}>
-            {children}
-          </OrganizationProvider>
+          <SpaceProvider Space={selectedSpace}>{children}</SpaceProvider>
         </SessionProvider>
       </NuqsAdapter>
     </NextThemesProvider>

@@ -1,5 +1,5 @@
-import { invitations, organizations, users } from "./schema";
+import { invitations, spaces, users } from "./schema";
 
-export type TOrganization = typeof organizations.$inferSelect;
+export type TSpace = typeof spaces.$inferSelect;
 export type TUser = typeof users.$inferSelect;
 export type TInvitation = typeof invitations.$inferSelect;

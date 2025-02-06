@@ -1,8 +1,8 @@
 import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { usersToOrganizations } from './users';
+import { usersToSpaces } from './users';
 
-export const organizations = pgTable('organizations', {
+export const spaces = pgTable('spaces', {
     id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),

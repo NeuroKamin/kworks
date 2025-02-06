@@ -18,7 +18,10 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "jsx": "react-jsx",
+    "types": ["react", "react-dom"],
+    "lib": ["dom", "dom.iterable", "esnext"]
   },
   "exclude": ["node_modules"]
 }

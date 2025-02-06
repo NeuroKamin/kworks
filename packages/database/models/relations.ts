@@ -3,10 +3,10 @@ import {
   users, 
   accounts, 
   sessions,
-  usersToOrganizations,
+  usersToSpaces,
   usersToProjects 
 } from './users';
-import { organizations } from './organizations';
+import { spaces } from './spaces';
 import { projects } from './projects';
 import { roles, projectRoles } from './roles';
 import { tasks } from './tasks';
@@ -21,28 +21,28 @@ import { invitations } from './invitations';
 
 // Отношения для пользователей
 export const usersRelations = relations(users, ({ one, many }) => ({
-  selectedOrganization: one(organizations, {
-    fields: [users.selectedOrganizationId],
-    references: [organizations.id],
+  selectedSpace: one(spaces, {
+    fields: [users.selectedSpaceId],
+    references: [spaces.id],
   }),
-  organizations: many(usersToOrganizations),
+  spaces: many(usersToSpaces),
   projects: many(usersToProjects),
   assignedTasks: many(tasks),
   timeTracking: many(timeTracking)
 }));
 
 // Отношения для организаций
-export const organizationsRelations = relations(organizations, ({ many }) => ({
-  users: many(usersToOrganizations),
+export const spacesRelations = relations(spaces, ({ many }) => ({
+  users: many(usersToSpaces),
   projects: many(projects),
   roles: many(roles)
 }));
 
 // Отношения для проектов
 export const projectsRelations = relations(projects, ({ one, many }) => ({
-  organization: one(organizations, {
-    fields: [projects.organizationId],
-    references: [organizations.id]
+  space: one(spaces, {
+    fields: [projects.spaceId],
+    references: [spaces.id]
   }),
   users: many(usersToProjects),
   tasks: many(tasks),
@@ -87,11 +87,11 @@ export const columnsRelations = relations(columns, ({ one, many }) => ({
 
 // Отношения для ролей
 export const rolesRelations = relations(roles, ({ one, many }) => ({
-  organization: one(organizations, {
-    fields: [roles.organizationId],
-    references: [organizations.id]
+  space: one(spaces, {
+    fields: [roles.spaceId],
+    references: [spaces.id]
   }),
-  users: many(usersToOrganizations),
+  users: many(usersToSpaces),
   fieldPermissions: many(fieldPermissions)
 }));
 
@@ -114,24 +114,24 @@ export const timeTrackingRelations = relations(timeTracking, ({ one }) => ({
     fields: [timeTracking.taskId],
     references: [tasks.id]
   }),
-  organization: one(organizations, {
-    fields: [timeTracking.organizationId],
-    references: [organizations.id]
+  space: one(spaces, {
+    fields: [timeTracking.spaceId],
+    references: [spaces.id]
   })
 }));
 
 // Отношения для пользователей в организациях
-export const usersToOrganizationsRelations = relations(usersToOrganizations, ({ one }) => ({
+export const usersToSpacesRelations = relations(usersToSpaces, ({ one }) => ({
   user: one(users, {
-    fields: [usersToOrganizations.userId],
+    fields: [usersToSpaces.userId],
     references: [users.id]
   }),
-  organization: one(organizations, {
-    fields: [usersToOrganizations.organizationId],
-    references: [organizations.id]
+  space: one(spaces, {
+    fields: [usersToSpaces.spaceId],
+    references: [spaces.id]
   }),
   role: one(roles, {
-    fields: [usersToOrganizations.roleId],
+    fields: [usersToSpaces.roleId],
     references: [roles.id]
   })
 }));
@@ -154,9 +154,9 @@ export const usersToProjectsRelations = relations(usersToProjects, ({ one }) => 
 
 // Отношения для приглашений
 export const invitationsRelations = relations(invitations, ({ one }) => ({
-  organization: one(organizations, {
-    fields: [invitations.organizationId],
-    references: [organizations.id]
+  space: one(spaces, {
+    fields: [invitations.spaceId],
+    references: [spaces.id]
   })
 }));
 

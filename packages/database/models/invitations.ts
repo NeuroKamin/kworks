@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
-import { organizations } from './organizations';
+import { spaces } from './spaces';
 import { relations } from 'drizzle-orm';
 
 // Таблица приглашений
@@ -9,9 +9,9 @@ export const invitations = pgTable('invitations', {
     .$defaultFn(() => crypto.randomUUID()),
     email: text('email').notNull(),
     token: text('token').notNull().unique(),
-    organizationId: text('organization_id')
+    spaceId: text('space_id')
         .notNull()
-        .references(() => organizations.id, { onDelete: 'cascade' }),
+        .references(() => spaces.id, { onDelete: 'cascade' }),
     status: text('status').notNull().default('pending'), // Статус приглашения (например, "pending", "accepted", "expired")
     createdAt: timestamp('created_at').defaultNow().notNull(),
     expiresAt: timestamp('expires_at').notNull(), // Срок действия приглашения

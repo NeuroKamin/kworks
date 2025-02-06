@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 
 export type CreateRoleParams = {
   name: string;
-  organizationId: string;
+  spaceId: string;
 };
 
 export type CreateProjectRoleParams = {
@@ -14,14 +14,14 @@ export type CreateProjectRoleParams = {
 };
 
 /**
- * Создает новую роль в организации
+ * Создает новую роль в пространстве
  */
 export async function createRole(params: CreateRoleParams) {
   const [role] = await db
     .insert(roles)
     .values({
       name: params.name,
-      organizationId: params.organizationId,
+      spaceId: params.spaceId,
     })
     .returning();
 
@@ -44,11 +44,11 @@ export async function createProjectRole(params: CreateProjectRoleParams) {
 }
 
 /**
- * Получает все роли организации
+ * Получает все роли пространства
  */
-export async function getOrganizationRoles(organizationId: string) {
+export async function getSpaceRoles(spaceId: string) {
   return await db.query.roles.findMany({
-    where: eq(roles.organizationId, organizationId),
+    where: eq(roles.spaceId, spaceId),
     orderBy: (roles, { desc }) => [desc(roles.createdAt)],
   });
 }
@@ -64,7 +64,7 @@ export async function getProjectRoles(projectId: string) {
 }
 
 /**
- * Удаляет роль из организации
+ * Удаляет роль из пространства
  */
 export async function deleteRole(roleId: string) {
   await db.delete(roles).where(eq(roles.id, roleId));

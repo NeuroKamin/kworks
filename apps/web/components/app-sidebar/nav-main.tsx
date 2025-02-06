@@ -12,6 +12,8 @@ import { SidebarMenuButton } from "./sidebar-menu-button";
 import { SidebarItem } from "@/actions/sidebar";
 
 export function NavMain({ items }: { items: SidebarItem[] }) {
+  console.log(items);
+
   return (
     <>
       {items.map((item) => (

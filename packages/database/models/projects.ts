@@ -1,6 +1,6 @@
 import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { organizations } from './organizations';
+import { spaces } from './spaces';
 import { usersToProjects } from './users';
 
 export const projects = pgTable('projects', {
@@ -8,9 +8,9 @@ export const projects = pgTable('projects', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
     name: text('name').notNull(),
-    organizationId: text('organization_id')
+    spaceId: text('space_id')
         .notNull()
-        .references(() => organizations.id, { onDelete: 'cascade' }),
+        .references(() => spaces.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').defaultNow().notNull(),  
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

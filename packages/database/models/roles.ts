@@ -1,20 +1,20 @@
 import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { organizations } from './organizations';
+import { spaces } from './spaces';
 import { projects } from './projects';
-import { usersToOrganizations } from './users';
+import { usersToSpaces } from './users';
 import { usersToProjects } from './users';
-import { OrganizationPermission, ProjectPermission } from './permissions';
+import { SpacePermission, ProjectPermission } from './permissions';
 
 export const roles = pgTable('roles', {
     id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
     name: text('name').notNull(),
-    organizationId: text('organization_id')
+    spaceId: text('space_id')
         .notNull()
-        .references(() => organizations.id, { onDelete: 'cascade' }),
-    permissions: text('permissions').array().$type<OrganizationPermission[]>().notNull().default([]),
+        .references(() => spaces.id, { onDelete: 'cascade' }),
+    permissions: text('permissions').array().$type<SpacePermission[]>().notNull().default([]),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

@@ -3,29 +3,29 @@
 import { db } from "@workspace/database";
 import { eq, and } from "drizzle-orm";
 import {
-  usersToOrganizations,
+  usersToSpaces,
   usersToProjects,
 } from "@workspace/database/models/users";
 import {
-  OrganizationPermission,
+  SpacePermission,
   ProjectPermission,
 } from "@workspace/database/models/permissions";
 
-import { getSelectedOrganization } from "./organizations";
+import { getSelectedSpace } from "./spaces";
 
 import { auth } from "@/auth";
 
 /**
- * Получает роль пользователя в организации
+ * Получает роль пользователя в пространстве
  */
-export async function getUserOrganizationRole(organizationId: string) {
+export async function getUserSpaceRole(spaceId: string) {
   const session = await auth();
   if (!session?.user?.id) return null;
 
-  const userRole = await db.query.usersToOrganizations.findFirst({
+  const userRole = await db.query.usersToSpaces.findFirst({
     where: and(
-      eq(usersToOrganizations.userId, session.user.id),
-      eq(usersToOrganizations.organizationId, organizationId),
+      eq(usersToSpaces.userId, session.user.id),
+      eq(usersToSpaces.spaceId, spaceId),
     ),
     with: {
       role: true,
@@ -56,30 +56,30 @@ export async function getUserProjectRole(projectId: string) {
 }
 
 /**
- * Проверяет наличие разрешения у пользователя в организации
+ * Проверяет наличие разрешения у пользователя в пространстве
  */
-export async function hasOrganizationPermission(
-  permission: OrganizationPermission,
-  organizationId?: string | undefined,
+export async function hasSpacePermission(
+  permission: SpacePermission,
+  spaceId?: string | undefined,
 ): Promise<boolean> {
-  if (!organizationId) {
-    organizationId = (await getSelectedOrganization()).id;
+  if (!spaceId) {
+    spaceId = (await getSelectedSpace()).id;
   }
 
-  const role = await getUserOrganizationRole(organizationId);
+  const role = await getUserSpaceRole(spaceId);
   if (!role) return false;
 
   return role.permissions.includes(permission);
 }
 
-export async function getOrganizationPermissions(
-  organizationId?: string | undefined,
-): Promise<OrganizationPermission[]> {
-  if (!organizationId) {
-    organizationId = (await getSelectedOrganization()).id;
+export async function getSpacePermissions(
+  spaceId?: string | undefined,
+): Promise<SpacePermission[]> {
+  if (!spaceId) {
+    spaceId = (await getSelectedSpace()).id;
   }
 
-  const role = await getUserOrganizationRole(organizationId);
+  const role = await getUserSpaceRole(spaceId);
   if (!role) return [];
 
   return role.permissions;
@@ -99,13 +99,13 @@ export async function hasProjectPermission(
 }
 
 /**
- * Проверяет наличие всех указанных разрешений у пользователя в организации
+ * Проверяет наличие всех указанных разрешений у пользователя в пространстве
  */
-export async function hasOrganizationPermissions(
-  organizationId: string,
-  permissions: OrganizationPermission[],
+export async function hasSpacePermissions(
+  spaceId: string,
+  permissions: SpacePermission[],
 ): Promise<boolean> {
-  const role = await getUserOrganizationRole(organizationId);
+  const role = await getUserSpaceRole(spaceId);
   if (!role) return false;
 
   return permissions.every((permission) =>

@@ -22,11 +22,11 @@ interface Props {
   invitedByUsername?: string;
   invitedByEmail?: string;
   inviteLink?: string;
-  organizationName?: string;
+  spaceName?: string;
 }
 
-const UserInviteTemplate = ({ invitedByUsername, inviteLink,  organizationName, invitedByEmail }: Props) => {
-  const previewText = organizationName ? `Присоединитесь к ${organizationName}`
+const UserInviteTemplate = ({ invitedByUsername, inviteLink,  spaceName, invitedByEmail }: Props) => {
+  const previewText = spaceName ? `Присоединитесь к ${spaceName}`
     : `Присоединитесь к kworks`
 
   return (
@@ -52,7 +52,7 @@ const UserInviteTemplate = ({ invitedByUsername, inviteLink,  organizationName, 
                 {invitedByEmail}
               </Link>
               ) пригласил вас в {
-                organizationName ? <><strong>{organizationName}</strong> в kworks</>
+                spaceName ? <><strong>{spaceName}</strong> в kworks</>
                   : <>kworks</>
               }.
             </Text>

@@ -1,5 +1,5 @@
-import { users, accounts, sessions, verificationTokens, usersToOrganizations, usersToProjects } from './models/users';
-import { organizations } from './models/organizations';
+import { users, accounts, sessions, verificationTokens, usersToSpaces, usersToProjects } from './models/users';
+import { spaces } from './models/spaces';
 import { projects } from './models/projects';
 import { roles, projectRoles } from './models/roles';
 import { tasks } from './models/tasks';
@@ -9,7 +9,7 @@ import { invitations } from './models/invitations';
 import { timeTracking } from './models/timeTracking';
 import {
   usersRelations,
-  organizationsRelations,
+  spacesRelations,
   projectsRelations,
   tasksRelations,
   boardsRelations,
@@ -17,7 +17,7 @@ import {
   rolesRelations,
   projectRolesRelations,
   timeTrackingRelations,
-  usersToOrganizationsRelations,
+  usersToSpacesRelations,
   usersToProjectsRelations,
   invitationsRelations,
   availableFieldsRelations, 
@@ -30,9 +30,9 @@ export {
     accounts,
     sessions,
     verificationTokens,
-    usersToOrganizations,
+    usersToSpaces,
     usersToProjects,
-    organizations,
+    spaces,
     projects,
     roles,
     projectRoles,
@@ -45,7 +45,7 @@ export {
     invitations,
     timeTracking,
     usersRelations,
-    organizationsRelations,
+    spacesRelations,
     projectsRelations,
     tasksRelations,
     boardsRelations,
@@ -53,7 +53,7 @@ export {
     rolesRelations,
     projectRolesRelations,
     timeTrackingRelations,
-    usersToOrganizationsRelations,
+    usersToSpacesRelations,
     usersToProjectsRelations,
     invitationsRelations,
     availableFieldsRelations, 

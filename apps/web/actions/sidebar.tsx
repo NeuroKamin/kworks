@@ -10,9 +10,9 @@ import {
   IconSettingsFilled,
   IconUserFilled,
 } from "@tabler/icons-react";
-import { OrganizationPermission } from "@workspace/database/models/permissions";
+import { SpacePermission } from "@workspace/database/models/permissions";
 
-import { getOrganizationPermissions } from "./permissions";
+import { getSpacePermissions } from "./permissions";
 
 interface SidebarSubItem {
   title: string;
@@ -29,42 +29,42 @@ export interface SidebarItem {
 }
 
 export async function getSidebarItems() {
-  const permissions = await getOrganizationPermissions();
+  const permissions = await getSpacePermissions();
 
   const canCreateProjects = permissions.includes(
-    OrganizationPermission.MANAGE_PROJECTS,
+    SpacePermission.MANAGE_PROJECTS,
   );
 
-  const OrganizationMenu: SidebarItem = {
+  const SpaceMenu: SidebarItem = {
     id: "3",
-    title: "Организация",
+    title: "Пространство",
     items: [],
   };
 
-  if (permissions.includes(OrganizationPermission.MANAGE_MEMBERS)) {
-    OrganizationMenu.items.push({
+  if (permissions.includes(SpacePermission.MANAGE_MEMBERS)) {
+    SpaceMenu.items.push({
       title: "Пользователи",
-      url: "/organization/users",
+      url: "/space/users",
       icon: IconUserFilled,
-      tooltip: "Пользователи организации",
+      tooltip: "Пользователи пространства",
     });
   }
 
-  if (permissions.includes(OrganizationPermission.MANAGE_ROLES)) {
-    OrganizationMenu.items.push({
+  if (permissions.includes(SpacePermission.MANAGE_ROLES)) {
+    SpaceMenu.items.push({
       title: "Роли",
-      url: "/organization/roles",
+      url: "/space/roles",
       icon: IconLockFilled,
-      tooltip: "Роли организации",
+      tooltip: "Роли пространства",
     });
   }
 
-  if (permissions.includes(OrganizationPermission.MANAGE_SETTINGS)) {
-    OrganizationMenu.items.push({
+  if (permissions.includes(SpacePermission.MANAGE_SETTINGS)) {
+    SpaceMenu.items.push({
       title: "Настройки",
-      url: "/organization/settings",
+      url: "/space/settings",
       icon: IconSettingsFilled,
-      tooltip: "Настройки организации",
+      tooltip: "Настройки пространства",
     });
   }
 
@@ -107,8 +107,8 @@ export async function getSidebarItems() {
     },
   ];
 
-  if (OrganizationMenu.items.length > 0) {
-    items.push(OrganizationMenu);
+  if (SpaceMenu.items.length > 0) {
+    items.push(SpaceMenu);
   }
 
   return items;

@@ -20,7 +20,7 @@ import { SubmitButton } from "@workspace/ui/components/form/submit-button";
 import { useFormStatus } from "react-dom";
 import { useQueryState } from "nuqs";
 
-import { inviteUsersToOrganization } from "@/actions/organizations";
+import { inviteUsersToSpace } from "@/actions/spaces";
 
 const UsersTable = ({
   users,
@@ -99,7 +99,7 @@ const UsersTable = ({
               Укажите email участников, которых вы хотите добавить
             </DialogDescription>
           </DialogHeader>
-          <form action={inviteUsersToOrganization} className="grid gap-4">
+          <form action={inviteUsersToSpace} className="grid gap-4">
             <Textarea
               name="emails"
               placeholder="Email участников, разделенные новой строчкой"
