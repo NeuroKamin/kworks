@@ -142,7 +142,7 @@ const SchedulerContent = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full page-animation">
       <div className="flex items-center justify-end px-4 gap-4">
         <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground">

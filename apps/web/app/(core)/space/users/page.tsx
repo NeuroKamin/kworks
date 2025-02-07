@@ -5,7 +5,6 @@ import UsersTable from "./table";
 
 import { hasSpacePermission } from "@/actions/permissions";
 import { getSpaceUsers, getSpaceInvites } from "@/actions/spaces";
-
 const UsersPage = async () => {
   const hasPermission = await hasSpacePermission(
     SpacePermission.MANAGE_MEMBERS,
@@ -19,7 +18,7 @@ const UsersPage = async () => {
   const invites = await getSpaceInvites();
 
   return (
-    <div className="p-4">
+    <div className="p-4 page-animation">
       <UsersTable users={users} invites={invites} />
     </div>
   );

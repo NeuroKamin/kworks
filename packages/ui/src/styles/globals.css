@@ -170,5 +170,13 @@
   html,
   body {
     @apply h-full;
+  }  
+
+}
+
+@layer components {
+  .page-animation {
+    @apply animate-in fade-in duration-300;
   }
 }
+
