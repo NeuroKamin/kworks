@@ -1,6 +1,6 @@
 "use client";
 
-import { TInvitation, TUser } from "@workspace/database/types";
+import { TInvitation, TUserWithRole } from "@workspace/database/types";
 import useColumns from "@workspace/ui/hooks/use-columns";
 import { DataTable } from "@workspace/ui/components/data-table";
 import { Button } from "@workspace/ui/components/button";
@@ -33,7 +33,7 @@ const UsersTable = ({
   users,
   invites: initialInvites,
 }: {
-  users: TUser[];
+  users: TUserWithRole[];
   invites: TInvitation[];
 }) => {
   const [tab, setTab] = useQueryState("tab");
@@ -79,12 +79,16 @@ const UsersTable = ({
     );
   };
 
-  const userColumn = useColumns<TUser>(
+  const userColumn = useColumns<TUserWithRole>(
     {
       columns: [
         {
           header: "Имя",
           accessorKey: "name",
+        },
+        {
+          header: "Роль",
+          accessorKey: "role",
         },
         {
           header: "Email",

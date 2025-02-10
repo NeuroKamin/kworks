@@ -21,7 +21,7 @@ export const authConfig: NextAuthConfig = {
       const isOnAuth = nextUrl.pathname.startsWith("/auth");
       const isOninvite = nextUrl.pathname.startsWith("/invitations/accept");
 
-      if (isLoggedIn && (isOnAuth || isOninvite)) {
+      if (isLoggedIn && isOnAuth) {
         return Response.redirect(new URL("/", nextUrl));
       }
 

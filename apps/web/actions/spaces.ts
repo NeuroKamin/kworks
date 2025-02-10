@@ -5,12 +5,13 @@ import { spaces } from "@workspace/database/models/spaces";
 import { roles } from "@workspace/database/models/roles";
 import { usersToSpaces, users } from "@workspace/database/models/users";
 import { and, eq } from "drizzle-orm";
-import { TInvitation, TSpace, TUser } from "@workspace/database/types";
-import { SpacePermission } from "@workspace/database/models/permissions";
+import { TInvitation, TSpace, TUserWithRole } from "@workspace/database/types";
 import { invitations } from "@workspace/database/models/invitations";
 import { sendInviteUserEmail } from "@workspace/mailer";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
+import { createBaseSpaceRoles } from "./roles";
 
 import { auth } from "@/auth";
 
@@ -42,15 +43,8 @@ export async function createSpace(
     })
     .returning();
 
-  // Создаем роль владельца со всеми разрешениями
-  const [ownerRole] = await db
-    .insert(roles)
-    .values({
-      name: "Владелец",
-      spaceId: space.id,
-      permissions: Object.values(SpacePermission),
-    })
-    .returning();
+  // Создаем базовые роли и получаем роль владельца
+  const ownerRole = await createBaseSpaceRoles(space.id);
 
   // Связываем пользователя с пространством
   await db.insert(usersToSpaces).values({
@@ -144,7 +138,7 @@ export async function updateCurrentSpace(data: Partial<TSpace>) {
 /**
  * Получает список пользователей выбранного пространства
  */
-export async function getSpaceUsers(): Promise<TUser[]> {
+export async function getSpaceUsers(): Promise<TUserWithRole[]> {
   const space = await getSelectedSpace();
 
   if (!space) {
@@ -155,10 +149,14 @@ export async function getSpaceUsers(): Promise<TUser[]> {
     where: eq(usersToSpaces.spaceId, space.id),
     with: {
       user: true,
+      role: true,
     },
   });
 
-  return spaceUsers.map((user) => user.user);
+  return spaceUsers.map((user) => ({
+    ...user.user,
+    role: user.role.name,
+  }));
 }
 
 /**

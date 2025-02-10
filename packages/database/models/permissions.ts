@@ -1,3 +1,10 @@
+
+export const SpaseBaseRoles = {
+  OWNER: "Владелец",
+  MEMBER: "Участник",
+  PROJECT_MANAGER: "Руководитель проектов",
+};
+
 export enum SpacePermission {
     MANAGE_MEMBERS = 'SPACE_MANAGE_MEMBERS',
     MANAGE_ROLES = 'SPACE_MANAGE_ROLES',
