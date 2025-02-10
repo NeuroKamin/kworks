@@ -37,7 +37,7 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/pg": "^8.11.10",
-    "@types/react": "19.0.7",
+    "@types/react": "19.0.3",
     "@types/react-dom": "19.0.3",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",

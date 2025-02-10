@@ -25,5 +25,12 @@
     "globals": "^15.12.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.15.0"
+  },
+  "dependencies": {
+    "@types/react": "19.0.3",
+    "@types/react-dom": "19.0.3",
+    "drizzle-orm": "0.38.4",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   }
 }

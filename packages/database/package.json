@@ -17,10 +17,14 @@
     ".": "./index.ts"
   },
   "dependencies": {
+    "@types/react": "19.0.3",
+    "@types/react-dom": "19.0.3",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.4",
     "next-auth": "5.0.0-beta.25",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",
