@@ -23,6 +23,7 @@ const defaultSpace: TSpace = {
   description: "",
   createdAt: new Date(),
   updatedAt: new Date(),
+  icon: "IconStack2",
 };
 
 const SpaceContext = createContext<SpaceContextValue>({

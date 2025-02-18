@@ -12,9 +12,11 @@ import { ScrollArea } from "../scroll-area";
 import { availableIcons } from "./avalibale-icons";
 
 interface IconPickerProps {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   onPick?: (icon: string) => void;
   asChild?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const IconPicker = ({ trigger, onPick, asChild }: IconPickerProps) => {
@@ -22,7 +24,7 @@ export const IconPicker = ({ trigger, onPick, asChild }: IconPickerProps) => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild={asChild}>{trigger}</PopoverTrigger>
+      {trigger && <PopoverTrigger asChild={asChild}>{trigger}</PopoverTrigger>}
       <PopoverContent align="start" className="w-md flex flex-col gap-4">
         <Input
           placeholder="Найти иконку"

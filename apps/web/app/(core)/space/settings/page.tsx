@@ -1,5 +1,3 @@
-import { IconPicker } from "@workspace/ui/components/icon-picker";
-
 import SettingsForm from "./form";
 
 export default function SettingsPage() {
