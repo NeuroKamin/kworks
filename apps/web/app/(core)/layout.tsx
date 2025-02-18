@@ -6,7 +6,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Providers } from "@/components/providers";
 import { getSelectedSpace } from "@/actions/spaces";
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
-  const cookie = (await cookies()).get("sidebar:state");
+  const cookie = (await cookies()).get("sidebar_state");
   const open = cookie?.value === "true";
   const selectedSpace = await getSelectedSpace();
 
