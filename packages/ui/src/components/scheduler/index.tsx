@@ -40,12 +40,9 @@ const SchedulerContent = ({
   const updateColumnWidth = () => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
-      const timeColumnWidth = 60; // Ширина колонки времени
+      const timeColumnWidth = 60;
       const availableWidth = containerWidth - timeColumnWidth;
-      const newColumnWidth = Math.max(
-        Math.min(Math.floor(availableWidth / 7), 200),
-        100,
-      ); // Минимум 100px, максимум 200px
+      const newColumnWidth = Math.max(Math.floor(availableWidth / 7), 100);
       setColumnWidth(newColumnWidth);
     }
   };
