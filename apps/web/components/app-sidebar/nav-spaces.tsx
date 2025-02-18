@@ -33,7 +33,7 @@ export function NavSpaces({ spaces }: { spaces: TSpace[] }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <SpaceIcon />
+              <SpaceIcon icon="IconStack2" />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
                   {currentSpace?.name}
@@ -57,7 +57,7 @@ export function NavSpaces({ spaces }: { spaces: TSpace[] }) {
                   onClick={() => setSpace(space)}
                   className="gap-2 p-2 group items-center"
                 >
-                  <SpaceIcon />
+                  <SpaceIcon icon="IconStack2" />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{space.name}</span>
                     <span className="truncate text-xs text-muted-foreground">

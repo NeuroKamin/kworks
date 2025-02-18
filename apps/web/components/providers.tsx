@@ -5,8 +5,10 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react";
 import { TSpace } from "@workspace/database/types";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { TooltipProvider } from "@workspace/ui/components/tooltip";
 
 import { SpaceProvider } from "@/store/space";
+
 export function Providers({
   children,
   selectedSpace,
@@ -23,7 +25,9 @@ export function Providers({
     >
       <NuqsAdapter>
         <SessionProvider>
-          <SpaceProvider Space={selectedSpace}>{children}</SpaceProvider>
+          <TooltipProvider>
+            <SpaceProvider Space={selectedSpace}>{children}</SpaceProvider>
+          </TooltipProvider>
         </SessionProvider>
       </NuqsAdapter>
     </NextThemesProvider>
