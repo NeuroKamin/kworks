@@ -5,6 +5,7 @@ import {
   sessions,
   users,
   verificationTokens,
+  authenticators,
 } from "@workspace/database/models/users";
 import { accounts } from "@workspace/database/models/users";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -29,6 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     accountsTable: accounts,
     sessionsTable: sessions,
     verificationTokensTable: verificationTokens,
+    authenticatorsTable: authenticators,
   }),
   ...authConfig,
   providers: [

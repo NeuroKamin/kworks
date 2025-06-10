@@ -12,6 +12,7 @@ import {
 } from "@workspace/ui/components/input-otp";
 import { useRouter } from "next/navigation";
 import { GalleryVerticalEnd } from "lucide-react";
+import { IconLoader2 } from "@tabler/icons-react";
 
 import { sendPin, signIn } from "@/actions/auth";
 
@@ -54,14 +55,14 @@ export const LoginForm = () => {
 
       if (result.error) {
         setError("Неверный код подтверждения");
+        setIsLoading(false);
+
         return;
       }
 
-      router.push("/");
-      router.refresh();
+      router.replace("/");
     } catch (error) {
       setError("Произошла ошибка при входе");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -236,34 +237,54 @@ export const LoginForm = () => {
                   />
                 </motion.div>
               )}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{
-                  duration,
-                  delay: delay * 3,
-                  y: bounce,
-                }}
-              >
-                <InputOTP
-                  maxLength={6}
-                  onComplete={onPinComplete}
-                  disabled={isLoading || (!name && !isEmailExist)}
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </motion.div>
+
+              <AnimatePresence>
+                {isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex items-center justify-center"
+                  >
+                    <IconLoader2 className="size-8 animate-spin text-muted-foreground" />
+                  </motion.div>
+                )}
+                {!isLoading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{
+                      duration,
+                      delay: delay * 3,
+                      y: bounce,
+                    }}
+                  >
+                    <InputOTP
+                      maxLength={6}
+                      onComplete={onPinComplete}
+                      onChange={() => {
+                        setError("");
+                      }}
+                      autoFocus
+                      disabled={isLoading || (!name && !isEmailExist)}
+                    >
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator />
+                      <InputOTPGroup>
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>

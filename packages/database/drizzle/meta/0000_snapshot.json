@@ -1,5 +1,5 @@
 {
-  "id": "ccc9c759-f73b-4bb8-a488-35907219fa06",
+  "id": "f67e5a83-4ea4-4151-baca-9981982541bb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -447,18 +447,19 @@
           "primaryKey": false,
           "notNull": true
         },
-        "organization_id": {
-          "name": "organization_id",
+        "space_id": {
+          "name": "space_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "text",
+          "type": "invitation_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": "'pending'"
+          "default": "'Отправлено'"
         },
         "created_at": {
           "name": "created_at",
@@ -476,12 +477,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "invitations_organization_id_organizations_id_fk": {
-          "name": "invitations_organization_id_organizations_id_fk",
+        "invitations_space_id_spaces_id_fk": {
+          "name": "invitations_space_id_spaces_id_fk",
           "tableFrom": "invitations",
-          "tableTo": "organizations",
+          "tableTo": "spaces",
           "columnsFrom": [
-            "organization_id"
+            "space_id"
           ],
           "columnsTo": [
             "id"
@@ -500,45 +501,6 @@
           ]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.organizations": {
-      "name": "organizations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -564,6 +526,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "is_base_role": {
+          "name": "is_base_role",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -618,8 +594,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "organization_id": {
-          "name": "organization_id",
+        "icon": {
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'IconFolder'"
+        },
+        "space_id": {
+          "name": "space_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -641,12 +624,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "projects_organization_id_organizations_id_fk": {
-          "name": "projects_organization_id_organizations_id_fk",
+        "projects_space_id_spaces_id_fk": {
+          "name": "projects_space_id_spaces_id_fk",
           "tableFrom": "projects",
-          "tableTo": "organizations",
+          "tableTo": "spaces",
           "columnsFrom": [
-            "organization_id"
+            "space_id"
           ],
           "columnsTo": [
             "id"
@@ -677,11 +660,25 @@
           "primaryKey": false,
           "notNull": true
         },
-        "organization_id": {
-          "name": "organization_id",
+        "space_id": {
+          "name": "space_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "is_base_role": {
+          "name": "is_base_role",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -700,12 +697,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "roles_organization_id_organizations_id_fk": {
-          "name": "roles_organization_id_organizations_id_fk",
+        "roles_space_id_spaces_id_fk": {
+          "name": "roles_space_id_spaces_id_fk",
           "tableFrom": "roles",
-          "tableTo": "organizations",
+          "tableTo": "spaces",
           "columnsFrom": [
-            "organization_id"
+            "space_id"
           ],
           "columnsTo": [
             "id"
@@ -759,6 +756,58 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.spaces": {
+      "name": "spaces",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icon": {
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'IconStack2'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -909,6 +958,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "space_id": {
+          "name": "space_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "start_time": {
           "name": "start_time",
           "type": "timestamp",
@@ -956,6 +1011,19 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "time_tracking_space_id_spaces_id_fk": {
+          "name": "time_tracking_space_id_spaces_id_fk",
+          "tableFrom": "time_tracking",
+          "tableTo": "spaces",
+          "columnsFrom": [
+            "space_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -992,6 +1060,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "selected_space_id": {
+          "name": "selected_space_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "image": {
           "name": "image",
           "type": "text",
@@ -1000,7 +1074,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "user_selected_space_id_spaces_id_fk": {
+          "name": "user_selected_space_id_spaces_id_fk",
+          "tableFrom": "user",
+          "tableTo": "spaces",
+          "columnsFrom": [
+            "selected_space_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "user_email_unique": {
@@ -1011,92 +1099,6 @@
           ]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.users_to_organizations": {
-      "name": "users_to_organizations",
-      "schema": "",
-      "columns": {
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "organization_id": {
-          "name": "organization_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "role_id": {
-          "name": "role_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "users_to_organizations_user_id_user_id_fk": {
-          "name": "users_to_organizations_user_id_user_id_fk",
-          "tableFrom": "users_to_organizations",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "users_to_organizations_organization_id_organizations_id_fk": {
-          "name": "users_to_organizations_organization_id_organizations_id_fk",
-          "tableFrom": "users_to_organizations",
-          "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "users_to_organizations_role_id_roles_id_fk": {
-          "name": "users_to_organizations_role_id_roles_id_fk",
-          "tableFrom": "users_to_organizations",
-          "tableTo": "roles",
-          "columnsFrom": [
-            "role_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "users_to_organizations_user_id_organization_id_pk": {
-          "name": "users_to_organizations_user_id_organization_id_pk",
-          "columns": [
-            "user_id",
-            "organization_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -1187,6 +1189,92 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.users_to_spaces": {
+      "name": "users_to_spaces",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "space_id": {
+          "name": "space_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "name": "role_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "users_to_spaces_user_id_user_id_fk": {
+          "name": "users_to_spaces_user_id_user_id_fk",
+          "tableFrom": "users_to_spaces",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "users_to_spaces_space_id_spaces_id_fk": {
+          "name": "users_to_spaces_space_id_spaces_id_fk",
+          "tableFrom": "users_to_spaces",
+          "tableTo": "spaces",
+          "columnsFrom": [
+            "space_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "users_to_spaces_role_id_roles_id_fk": {
+          "name": "users_to_spaces_role_id_roles_id_fk",
+          "tableFrom": "users_to_spaces",
+          "tableTo": "roles",
+          "columnsFrom": [
+            "role_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "users_to_spaces_user_id_space_id_pk": {
+          "name": "users_to_spaces_user_id_space_id_pk",
+          "columns": [
+            "user_id",
+            "space_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.verificationToken": {
       "name": "verificationToken",
       "schema": "",
@@ -1219,7 +1307,17 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.invitation_status": {
+      "name": "invitation_status",
+      "schema": "public",
+      "values": [
+        "Отправлено",
+        "Принято",
+        "Истекло"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

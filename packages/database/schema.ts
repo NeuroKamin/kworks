@@ -1,11 +1,11 @@
-import { users, accounts, sessions, verificationTokens, usersToSpaces, usersToProjects } from './models/users';
+import { users, accounts, sessions, verificationTokens, usersToSpaces, usersToProjects, authenticators } from './models/users';
 import { spaces } from './models/spaces';
 import { projects } from './models/projects';
 import { roles, projectRoles } from './models/roles';
 import { tasks } from './models/tasks';
 import { availableFields, fieldValues, fieldPermissions } from './models/customFields';
 import { boards, columns } from './models/boards';
-import { invitations } from './models/invitations';
+import { invitationStatusEnum, invitations } from './models/invitations';
 import { timeTracking } from './models/timeTracking';
 import {
   usersRelations,
@@ -29,6 +29,7 @@ export {
     users,
     accounts,
     sessions,
+    authenticators,
     verificationTokens,
     usersToSpaces,
     usersToProjects,
@@ -42,6 +43,7 @@ export {
     fieldPermissions,
     boards,
     columns,
+    invitationStatusEnum,
     invitations,
     timeTracking,
     usersRelations,

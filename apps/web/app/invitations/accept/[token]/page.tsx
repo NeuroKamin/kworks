@@ -7,17 +7,17 @@ import { GalleryVerticalEnd } from "lucide-react";
 
 import { AcceptInvitationForm } from "./form";
 
-interface AcceptInvitationPageProps {
-  params: {
-    token: string;
-  };
-}
-
 export default async function AcceptInvitationPage({
   params,
-}: AcceptInvitationPageProps) {
+}: {
+  params: Promise<{
+    token: string;
+  }>;
+}) {
+  const { token } = await params;
+
   const invitation = await db.query.invitations.findFirst({
-    where: eq(invitations.token, params.token),
+    where: eq(invitations.token, token),
     with: {
       space: true,
     },
@@ -82,7 +82,7 @@ export default async function AcceptInvitationPage({
         </p>
       </div>
       <AcceptInvitationForm
-        token={params.token}
+        token={token}
         email={invitation.email}
         isExistingUser={!!existingUser}
       />
