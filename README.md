@@ -1,31 +1,22 @@
-# shadcn/ui monorepo template
 
-This template is for creating a monorepo with shadcn/ui.
 
-## Usage
+## Environment Variables
+
+### apps/web
+Скопируйте файл `apps/web/example.env` в `apps/web/.env` и заполните переменные.
+
+### packages/database
+Скопируйте файл `packages/database/example.env` в `packages/database/.env` и заполните переменные.
+
+### packages/mailer
+Скопируйте файл `packages/mailer/example.env` в `packages/mailer/.env` и заполните переменные.
+
+## Database Migrations
+
+Для применения миграций к базе данных перейдите в директорию `packages/database` и выполните команду:
 
 ```bash
-pnpm dlx shadcn@latest init
+pnpm push
 ```
 
-## Adding components
-
-To add components to your app, run the following command at the root of your `web` app:
-
-```bash
-pnpm dlx shadcn@latest add button -c apps/web
-```
-
-This will place the ui components in the `packages/ui/src/components` directory.
-
-## Tailwind
-
-Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
-
-## Using components
-
-To use the components in your app, import them from the `ui` package.
-
-```tsx
-import { Button } from "@workspace/ui/components/ui/button"
-```
+Эта команда применит все миграции к вашей базе данных.
