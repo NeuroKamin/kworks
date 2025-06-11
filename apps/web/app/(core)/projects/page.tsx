@@ -1,7 +1,15 @@
-import WIP from "@/components/wip";
+// web\app\(core)\projects\page.tsx
 
-const ProjectsPage = () => {
-  return <WIP />;
+import {JSX, Suspense} from "react";
+import { ProjectsContent } from "./components/projects-content";
+import { MinimalProjectsSkeleton } from "./components/minimal-projects-skeleton";
+
+const ProjectsPage = (): JSX.Element => {
+  return (
+      <Suspense fallback={<MinimalProjectsSkeleton />}>
+        <ProjectsContent />
+      </Suspense>
+  );
 };
 
 export default ProjectsPage;
