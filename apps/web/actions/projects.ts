@@ -51,7 +51,7 @@ export async function getSpaceProjects(
 
   if (includeRelations) {
     // Загружаем проекты со всеми связанными данными
-    return await db.query.projects.findMany({
+    return db.query.projects.findMany({
       where: eq(projects.spaceId, space.id),
       with: {
         space: true, // Информация о пространстве
@@ -69,7 +69,7 @@ export async function getSpaceProjects(
     });
   }
 
-  return await db.query.projects.findMany({
+  return db.query.projects.findMany({
     where: eq(projects.spaceId, space.id),
   });
 }
@@ -111,7 +111,7 @@ export async function getProjectById(
  * Получает проект с участниками (пользователями)
  */
 export async function getProjectWithUsers(projectId: string) {
-  return await db.query.projects.findFirst({
+  return db.query.projects.findFirst({
     where: eq(projects.id, projectId),
     with: {
       users: {
@@ -128,7 +128,7 @@ export async function getProjectWithUsers(projectId: string) {
  * Получает проект с задачами
  */
 export async function getProjectWithTasks(projectId: string) {
-  return await db.query.projects.findFirst({
+  return db.query.projects.findFirst({
     where: eq(projects.id, projectId),
     with: {
       tasks: true, // Все задачи проекта
@@ -140,7 +140,7 @@ export async function getProjectWithTasks(projectId: string) {
  * Получает проект с досками
  */
 export async function getProjectWithBoards(projectId: string) {
-  return await db.query.projects.findFirst({
+  return db.query.projects.findFirst({
     where: eq(projects.id, projectId),
     with: {
       boards: true, // Все доски проекта
@@ -152,7 +152,7 @@ export async function getProjectWithBoards(projectId: string) {
  * Получает полную информацию о проекте со всеми связанными данными
  */
 export async function getFullProjectInfo(projectId: string) {
-  return await db.query.projects.findFirst({
+  return db.query.projects.findFirst({
     where: eq(projects.id, projectId),
     with: {
       space: true, // Пространство
@@ -219,7 +219,7 @@ export async function deleteProject(projectId: string): Promise<boolean> {
  */
 export async function getUserProjects(
   includeProjectDetails: boolean = false,
-): Promise<any[]> {
+): Promise<unknown[]> {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -228,7 +228,7 @@ export async function getUserProjects(
 
   if (includeProjectDetails) {
     // Загружаем с подробной информацией о проектах
-    return await db.query.usersToProjects.findMany({
+    return db.query.usersToProjects.findMany({
       where: eq(usersToProjects.userId, session.user.id),
       with: {
         project: {
@@ -243,7 +243,7 @@ export async function getUserProjects(
     });
   }
 
-  return await db.query.usersToProjects.findMany({
+  return db.query.usersToProjects.findMany({
     where: eq(usersToProjects.userId, session.user.id),
     with: {
       project: true,
@@ -321,8 +321,7 @@ export async function addUserToProject(
     });
 
     return true;
-  } catch (error) {
-    console.error("Ошибка при добавлении пользователя к проекту:", error);
+  } catch {
     return false;
   }
 }
@@ -345,8 +344,7 @@ export async function removeUserFromProject(
       );
 
     return true;
-  } catch (error) {
-    console.error("Ошибка при удалении пользователя из проекта:", error);
+  } catch {
     return false;
   }
 }
