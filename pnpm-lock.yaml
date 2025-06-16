@@ -12,12 +12,21 @@ importers:
         specifier: ^3.23.8
         version: 3.24.1
     devDependencies:
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.15.0
+        version: 8.18.1(@typescript-eslint/parser@8.18.1(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2))(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
+      '@typescript-eslint/parser':
+        specifier: ^8.15.0
+        version: 8.18.1(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
       '@workspace/eslint-config':
         specifier: workspace:*
         version: link:packages/eslint-config
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:packages/typescript-config
+      eslint:
+        specifier: ^9.15.0
+        version: 9.17.0(jiti@2.4.2)
       prettier:
         specifier: ^3.2.5
         version: 3.4.2
@@ -180,6 +189,9 @@ importers:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
     devDependencies:
+      '@eslint/js':
+        specifier: ^9.29.0
+        version: 9.29.0
       '@next/eslint-plugin-next':
         specifier: ^15.1.0
         version: 15.1.0
@@ -1170,6 +1182,10 @@ packages:
 
   '@eslint/js@9.17.0':
     resolution: {integrity: sha512-Sxc4hqcs1kTu0iID3kcZDW3JHq2a77HO9P8CP6YEA/FpH3Ll8UXE2r/86Rz9YJLKme39S9vU5OWNjC6Xl0Cr3w==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/js@9.29.0':
+    resolution: {integrity: sha512-3PIF4cBw/y+1u2EazflInpV+lYsSG0aByVIQzAgb1m1MhHFSbqTyNqtBKHgWf/9Ykud+DhILS9EGkmekVhbKoQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.5':
@@ -5445,7 +5461,7 @@ snapshots:
       '@babel/traverse': 7.26.5
       '@babel/types': 7.26.5
       convert-source-map: 2.0.0
-      debug: 4.4.0
+      debug: 4.4.1
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -5520,7 +5536,7 @@ snapshots:
       '@babel/parser': 7.26.5
       '@babel/template': 7.25.9
       '@babel/types': 7.26.5
-      debug: 4.4.0
+      debug: 4.4.1
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -5845,7 +5861,7 @@ snapshots:
   '@eslint/config-array@0.19.1':
     dependencies:
       '@eslint/object-schema': 2.1.5
-      debug: 4.4.0
+      debug: 4.4.1
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -5857,7 +5873,7 @@ snapshots:
   '@eslint/eslintrc@3.2.0':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.0
+      debug: 4.4.1
       espree: 10.3.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -5869,6 +5885,8 @@ snapshots:
       - supports-color
 
   '@eslint/js@9.17.0': {}
+
+  '@eslint/js@9.29.0': {}
 
   '@eslint/object-schema@2.1.5': {}
 
@@ -7087,7 +7105,7 @@ snapshots:
       '@typescript-eslint/types': 8.18.1
       '@typescript-eslint/typescript-estree': 8.18.1(typescript@5.7.2)
       '@typescript-eslint/visitor-keys': 8.18.1
-      debug: 4.4.0
+      debug: 4.4.1
       eslint: 9.17.0(jiti@2.4.2)
       typescript: 5.7.2
     transitivePeerDependencies:
@@ -7107,7 +7125,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 8.18.0(typescript@5.7.2)
       '@typescript-eslint/utils': 8.18.0(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
-      debug: 4.4.0
+      debug: 4.4.1
       eslint: 9.17.0(jiti@2.4.2)
       ts-api-utils: 1.4.3(typescript@5.7.2)
       typescript: 5.7.2
@@ -7133,7 +7151,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.18.0
       '@typescript-eslint/visitor-keys': 8.18.0
-      debug: 4.4.0
+      debug: 4.4.1
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -7148,10 +7166,10 @@ snapshots:
       '@typescript-eslint/types': 8.18.1
       '@typescript-eslint/visitor-keys': 8.18.1
       debug: 4.4.1
-      fast-glob: 3.3.2
+      fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.2
       ts-api-utils: 1.4.3(typescript@5.7.2)
       typescript: 5.7.2
     transitivePeerDependencies:
@@ -7713,7 +7731,7 @@ snapshots:
       '@one-ini/wasm': 0.1.1
       commander: 10.0.1
       minimatch: 9.0.1
-      semver: 7.6.3
+      semver: 7.7.2
 
   electron-to-chromium@1.5.166: {}
 

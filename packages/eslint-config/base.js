@@ -16,7 +16,6 @@ export const config = [
   eslintConfigPrettier,
   ...tseslint.configs.recommended,
   {
-
     plugins: {
       turbo: turboPlugin,
       "unused-imports": unusedImports,
