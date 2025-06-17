@@ -1,16 +1,26 @@
-// web\app\(core)\projects\page.tsx
+"use server";
 
-import { JSX, Suspense } from "react";
+// app/(core)/projects/projects-content.tsx
 
-import { ProjectsContent } from "./components/projects-content";
-import { MinimalProjectsSkeleton } from "./components/minimal-projects-skeleton";
+import { EmptyProjectsState } from "./components/empty-projects-state";
+import { FullProjectsState } from "./components/full-projects-state.tsx";
 
-const ProjectsPage = (): JSX.Element => {
+import { getSpaceProjects } from "@/actions/projects";
+
+export default async function ProjectsContent() {
+  const projects = await getSpaceProjects();
+
+  if (projects.length === 0) {
+    return (
+      <div className="container mx-auto py-6 h-full">
+        <EmptyProjectsState />
+      </div>
+    );
+  }
+
   return (
-    <Suspense fallback={<MinimalProjectsSkeleton />}>
-      <ProjectsContent />
-    </Suspense>
+    <div className="container mx-auto py-6">
+      <FullProjectsState />
+    </div>
   );
-};
-
-export default ProjectsPage;
+}

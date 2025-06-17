@@ -5,7 +5,13 @@ import { Toaster } from "@workspace/ui/components/sonner";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Providers } from "@/components/providers";
 import { getSelectedSpace } from "@/actions/spaces";
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const RootLayout = async ({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) => {
   const cookie = (await cookies()).get("sidebar_state");
   const open = cookie?.value === "true";
   const selectedSpace = await getSelectedSpace();
@@ -14,7 +20,10 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     <Providers selectedSpace={selectedSpace}>
       <SidebarProvider defaultOpen={open}>
         <AppSidebar />
-        <main className="w-full h-full">{children}</main>
+        <main className="w-full h-full">
+          {children}
+          {modal}
+        </main>
       </SidebarProvider>
       <Toaster />
     </Providers>

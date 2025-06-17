@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { db } from "@workspace/database";
 import { projects } from "@workspace/database/models/projects";
 import { usersToProjects } from "@workspace/database/models/users";
@@ -8,34 +9,77 @@ import { TProject } from "@workspace/database/types";
 
 import { getSelectedSpace } from "./spaces";
 
+import { FormResult } from "@/lib/types";
+import { formError, okResult } from "@/lib/utils";
 import { auth } from "@/auth";
+
+const createProjectSchema = z.object({
+  title: z
+    .string()
+    .min(1, { message: "Название проекта не может быть пустым" }),
+  description: z.string().optional(),
+  icon: z.string().optional(),
+});
 
 /**
  * Эта функция создает новый проект в базе данных.
  */
-export async function createProject(
-  name: string,
-  icon?: string,
-  spaceId_?: string,
-): Promise<TProject> {
-  // Если не указано пространство, получаем текущее выбранное
-  let spaceId = spaceId_;
-  if (!spaceId) {
-    const selectedSpace = await getSelectedSpace();
-    spaceId = selectedSpace.id;
+export const createProject = async (
+  initialState: FormResult,
+  formData: FormData,
+): Promise<FormResult> => {
+  const title = formData.get("title");
+  const description = formData.get("description");
+  const icon = formData.get("icon");
+
+  const validatedFields = createProjectSchema.safeParse({
+    title,
+    description,
+    icon,
+  });
+
+  if (!validatedFields.success) {
+    console.log(validatedFields.error.issues);
+    return formError(validatedFields.error.issues);
   }
 
-  const [project] = await db
-    .insert(projects)
-    .values({
-      name: name,
-      icon: icon || "IconFolder",
-      spaceId: spaceId,
-    })
-    .returning();
+  try {
+    // Получаем текущее выбранное пространство
+    const selectedSpace = await getSelectedSpace();
 
-  return project;
-}
+    if (!selectedSpace) {
+      return formError([
+        {
+          code: "custom",
+          message: "Пространство не выбрано",
+          path: ["space"],
+        },
+      ]);
+    }
+
+    // Создаем проект
+    const [project] = await db
+      .insert(projects)
+      .values({
+        name: validatedFields.data.title,
+        description: validatedFields.data.description,
+        icon: validatedFields.data.icon || "IconFolder",
+        spaceId: selectedSpace.id,
+      })
+      .returning();
+
+    return okResult(project);
+  } catch (error) {
+    console.error("Ошибка при создании проекта:", error);
+    return formError([
+      {
+        code: "custom",
+        message: "Произошла ошибка при создании проекта",
+        path: ["root"],
+      },
+    ]);
+  }
+};
 
 /**
  * Эта функция получает все проекты, которые принадлежат текущему выбранному пространству.

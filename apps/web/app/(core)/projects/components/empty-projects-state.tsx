@@ -1,10 +1,10 @@
-"use client";
+"use server";
 
 import Link from "next/link";
 import { Button } from "@workspace/ui/components/button";
 import { Plus, FolderOpen } from "lucide-react";
 
-export function EmptyProjectsState() {
+export async function EmptyProjectsState() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-4">
       <div className="flex aspect-square p-2 items-center justify-center rounded-lg bg-gradient-to-b from-primary to-primary/70 text-primary-foreground">
