@@ -2,26 +2,35 @@
 
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { Suspense } from "react";
+
+import { ProjectsGrid } from "./projects-grid";
+import { ProjectsGridSkeleton } from "./projects-grid-skeleton";
 
 export async function FullProjectsState() {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col space-y-6 p-8 pt-6">
       <div>
-        <h1 className="text-2xl font-semibold">Проекты</h1>
+        <div className="flex items-center gap-3 mb-1">
+          <h1 className="text-3xl font-bold">Проекты</h1>
+          <Link
+            href="/projects/new"
+            scroll={false}
+            prefetch={false}
+            className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-xs text-primary-foreground hover:bg-primary/90 transition"
+          >
+            <Plus className="w-3 h-3" />
+            Новый
+          </Link>
+        </div>
         <p className="text-muted-foreground">
           Управляйте своими проектами и отслеживайте прогресс
         </p>
       </div>
 
-      <Link
-        href="/projects/new"
-        scroll={false} // не сбрасываем позицию прокрутки
-        prefetch={false} // (опция) можно отключить префетч
-        className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 transition"
-      >
-        <Plus className="w-4 h-4" />
-        Новый&nbsp;проект
-      </Link>
+      <Suspense fallback={<ProjectsGridSkeleton />}>
+        <ProjectsGrid />
+      </Suspense>
     </div>
   );
 }

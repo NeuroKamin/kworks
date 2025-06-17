@@ -31,10 +31,7 @@ function NewProjectForm({
   // Обработка успешного создания проекта
   useEffect(() => {
     if (state.data && !state.errors) {
-      // Перенаправляем на страницу проектов или назад
-      router.push("/projects");
-      // Или если хотите на страницу созданного проекта:
-      // router.push(`/projects/${state.data.id}`);
+      router.back();
     }
   }, [state.data, state.errors, router]);
 

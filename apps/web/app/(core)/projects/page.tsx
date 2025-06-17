@@ -19,7 +19,7 @@ export default async function ProjectsContent() {
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container">
       <FullProjectsState />
     </div>
   );
