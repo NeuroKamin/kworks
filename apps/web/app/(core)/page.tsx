@@ -1,7 +1,8 @@
 import { getWeek } from "@workspace/ui/lib/utils";
 
 import { getEvents } from "@/actions/events";
-import Scheduler from "@/components/Scheduler";
+import Scheduler from "@/components/scheduler";
+
 
 export default async function Page() {
   const { startOfWeek, endOfWeek } = getWeek();

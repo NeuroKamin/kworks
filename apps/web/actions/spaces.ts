@@ -235,7 +235,6 @@ export async function deleteInvitation(invitationId: string) {
 }
 
 export async function resendInvitation(invitationId: string) {
-  "use server";
 
   const space = await getSelectedSpace();
   const session = await auth();
