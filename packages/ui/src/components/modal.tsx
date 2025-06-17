@@ -16,6 +16,7 @@ import {
   DrawerTitle,
 } from "@workspace/ui/components/drawer";
 import { useRouter } from "next/navigation";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import React from "react";
 
 export interface ModalProps {
@@ -48,7 +49,13 @@ function Modal(props: ModalProps) {
       >
         <DialogContent>
           <DialogHeader>
-            {props.title && <DialogTitle>{props.title}</DialogTitle>}
+            {props.title ? (
+              <DialogTitle>{props.title}</DialogTitle>
+            ) : (
+              <VisuallyHidden asChild>
+                <DialogTitle>Диалоговое окно</DialogTitle>
+              </VisuallyHidden>
+            )}
             {props.description && (
               <DialogDescription>{props.description}</DialogDescription>
             )}
@@ -65,9 +72,15 @@ function Modal(props: ModalProps) {
       onOpenChange={onOpenChange}
       defaultOpen={props.defaultOpen}
     >
-      <DrawerContent>
+      <DrawerContent className="p-4">
         <DrawerHeader className="text-left">
-          {props.title && <DrawerTitle>{props.title}</DrawerTitle>}
+          {props.title ? (
+            <DrawerTitle>{props.title}</DrawerTitle>
+          ) : (
+            <VisuallyHidden asChild>
+              <DrawerTitle>Диалоговое окно</DrawerTitle>
+            </VisuallyHidden>
+          )}
           {props.description && (
             <DrawerDescription>{props.description}</DrawerDescription>
           )}

@@ -4,7 +4,7 @@ import NewProject from "@/app/(core)/projects/components/new-project";
 
 export default function Page() {
   return (
-    <Modal title="Создание проекта" defaultOpen backOnClose>
+    <Modal defaultOpen backOnClose>
       <NewProject />
     </Modal>
   );

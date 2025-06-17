@@ -1,4 +1,3 @@
-import { Checkbox } from "@workspace/ui/components/checkbox";
 import {
   Avatar,
   AvatarFallback,
@@ -6,16 +5,17 @@ import {
 } from "@workspace/ui/components/avatar";
 import { Badge } from "@workspace/ui/components/badge";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
+import { Check } from "lucide-react";
 
 import { getSpaceUsers } from "@/actions/spaces";
+import { auth } from "@/auth";
 
 function SpaceUsersSkeleton() {
   return (
-    <div className="border rounded-md p-2">
+    <div className="h-[156px] border rounded-md p-2">
       <div className="space-y-2">
         {[...Array(3)].map((_, index) => (
           <div key={index} className="flex items-center space-x-3 p-2">
-            <div className="h-4 w-4 rounded bg-muted animate-pulse" />
             <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
             <div className="flex-1 space-y-1">
               <div className="h-4 w-32 bg-muted rounded animate-pulse" />
@@ -31,6 +31,7 @@ function SpaceUsersSkeleton() {
 
 async function SpaceUsers() {
   const users = await getSpaceUsers();
+  const session = await auth();
 
   await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -55,36 +56,73 @@ async function SpaceUsers() {
   }
 
   return (
-    <ScrollArea className="max-h-48 border rounded-md p-2">
+    <ScrollArea className="h-[156px] border rounded-md p-2">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          .user-selector input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+          }
+          .user-selector input[type="checkbox"]:checked ~ .user-content .user-avatar {
+            box-shadow: 0 0 0 2px hsl(var(--primary)), 0 0 0 4px hsl(var(--background));
+          }
+          .user-selector input[type="checkbox"]:checked ~ .user-content .check-indicator {
+            display: flex;
+          }
+          .check-indicator {
+            display: none;
+          }
+        `,
+        }}
+      />
       <div className="space-y-2">
-        {users.map((user) => (
-          <label
-            key={user.id}
-            className="flex items-center space-x-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer"
-            htmlFor={`user-${user.id}`}
-          >
-            <Checkbox id={`user-${user.id}`} />
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user.image || undefined} />
-              <AvatarFallback className="text-xs">
-                {getUserInitials(user.name, user.email)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">
-                {user.name || user.email}
-              </p>
-              {user.name && (
-                <p className="text-xs text-muted-foreground truncate">
-                  {user.email}
-                </p>
-              )}
-            </div>
-            <Badge variant="secondary" className="text-xs">
-              {user.role}
-            </Badge>
-          </label>
-        ))}
+        {users.map((user) => {
+          const isCurrentUser = session?.user?.id === user.id;
+
+          return (
+            <label
+              key={user.id}
+              className="user-selector flex items-center space-x-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer transition-colors relative"
+            >
+              <input
+                type="checkbox"
+                name="selectedUsers"
+                value={user.id}
+                defaultChecked={isCurrentUser}
+                disabled={isCurrentUser}
+              />
+              <div className="user-content flex items-center space-x-3 w-full">
+                <div className="relative">
+                  <Avatar className="user-avatar h-8 w-8 transition-all">
+                    <AvatarImage src={user.image || undefined} />
+                    <AvatarFallback className="text-xs">
+                      {getUserInitials(user.name, user.email)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="check-indicator absolute -top-1 -right-1 h-4 w-4 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="h-2.5 w-2.5 text-primary-foreground" />
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
+                    {user.name || user.email}
+                    {isCurrentUser && " (Вы)"}
+                  </p>
+                  {user.name && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email}
+                    </p>
+                  )}
+                </div>
+                <Badge variant="secondary" className="text-xs">
+                  {user.role}
+                </Badge>
+              </div>
+            </label>
+          );
+        })}
       </div>
     </ScrollArea>
   );
