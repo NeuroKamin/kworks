@@ -6,12 +6,18 @@
     "start": "turbo start --filter=web",
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:mailer": "turbo run dev --filter=@workspace/mailer...",
+    "dev:db": "turbo run dev --filter=@workspace/database...",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
     "@workspace/eslint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.15.0",
     "prettier": "^3.2.5",
     "turbo": "^2.3.0",
     "typescript": "^5.4.5"

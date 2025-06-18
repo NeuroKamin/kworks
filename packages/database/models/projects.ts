@@ -8,6 +8,7 @@ export const projects = pgTable('projects', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
     name: text('name').notNull(),
+    description: text('description'),
     icon: text('icon').default('IconFolder').notNull(),
     spaceId: text('space_id')
         .notNull()
