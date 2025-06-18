@@ -180,7 +180,7 @@ const SchedulerContent = ({
       >
         <TimeColumn />
         <div className="flex-1 flex relative">
-          <div className="absolute inset-0 flex">
+          <div className="absolute inset-0 flex @container">
             {days.map((date, index) => (
               <DayColumn
                 key={index}

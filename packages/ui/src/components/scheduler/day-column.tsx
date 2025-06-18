@@ -39,7 +39,12 @@ const DayColumn = ({
           {date.getDate()}
         </div>
         <div className="flex flex-col">
-          <div>{date.toLocaleDateString("ru-RU", { weekday: "long" })}</div>
+          <div className="hidden @5xl:block">
+            {date.toLocaleDateString("ru-RU", { weekday: "long" })}
+          </div>
+          <div className="block @5xl:hidden">
+            {date.toLocaleDateString("ru-RU", { weekday: "short" })}
+          </div>
           <div className="font-semibold">
             {Math.round((totalTime / (1000 * 60 * 60)) * 10) / 10}ч
           </div>
