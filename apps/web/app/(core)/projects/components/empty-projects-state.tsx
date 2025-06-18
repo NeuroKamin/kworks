@@ -19,17 +19,12 @@ export async function EmptyProjectsState() {
           <p>с задачами и командой</p>
         </div>
 
-        {/* единственный потомок Button — Link */}
-        <Button>
-          <Link
-            href="/projects/new"
-            scroll={false}
-            className="inline-flex items-center gap-2"
-          >
+        <Link href="/projects/new" scroll={false}>
+          <Button className="cursor-pointer">
             <Plus className="w-4 h-4" />
-            <span>Создать&nbsp;проект</span>
-          </Link>
-        </Button>
+            <span className="pl-2">Создать&nbsp;проект</span>
+          </Button>
+        </Link>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ import { auth } from "@/auth";
 
 function SpaceUsersSkeleton() {
   return (
-    <div className="h-[156px] border rounded-md p-2">
+    <div className="h-[250px] border rounded-md p-2">
       <div className="space-y-2">
         {[...Array(3)].map((_, index) => (
           <div key={index} className="flex items-center space-x-3 p-2">
@@ -32,8 +32,6 @@ function SpaceUsersSkeleton() {
 async function SpaceUsers() {
   const users = await getSpaceUsers();
   const session = await auth();
-
-  await new Promise((resolve) => setTimeout(resolve, 500));
 
   const getUserInitials = (name: string | null, email: string | null) => {
     if (name) {
@@ -56,7 +54,7 @@ async function SpaceUsers() {
   }
 
   return (
-    <ScrollArea className="h-[156px] border rounded-md p-2">
+    <ScrollArea className="h-[250px] border rounded-md p-2">
       <style
         dangerouslySetInnerHTML={{
           __html: `

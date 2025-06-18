@@ -131,7 +131,7 @@ function NewProjectForm({
         {children}
       </div>
 
-      <SubmitButton className="w-full text-lg font-semibold py-3">
+      <SubmitButton className="w-full text-lg font-semibold py-3 cursor-pointer">
         Создать проект
       </SubmitButton>
     </form>

@@ -27,6 +27,9 @@ export interface ModalProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   backOnClose?: boolean;
+  snapPoints?: Array<string | number>;
+  activeSnapPoint?: string | number | null;
+  snapToSequentialPoint?: boolean;
 }
 
 function Modal(props: ModalProps) {
@@ -67,12 +70,8 @@ function Modal(props: ModalProps) {
   }
 
   return (
-    <Drawer
-      open={props.open}
-      onOpenChange={onOpenChange}
-      defaultOpen={props.defaultOpen}
-    >
-      <DrawerContent className="p-4">
+    <Drawer onOpenChange={onOpenChange} {...props}>
+      <DrawerContent>
         <DrawerHeader className="text-left">
           {props.title ? (
             <DrawerTitle>{props.title}</DrawerTitle>
@@ -85,7 +84,7 @@ function Modal(props: ModalProps) {
             <DrawerDescription>{props.description}</DrawerDescription>
           )}
         </DrawerHeader>
-        {props.children}
+        <div className="px-4 pb-4">{props.children}</div>
       </DrawerContent>
     </Drawer>
   );
